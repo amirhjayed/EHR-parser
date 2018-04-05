@@ -5,7 +5,11 @@
 </head>
 <body>
     <h1>
-        Submit
+      Submit
+      {% if uploaded_file_url %}
+        <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+      {% endif %}
     </h1>
+    <p>{{ contact_json }}</p>
 </body>
 </html>
