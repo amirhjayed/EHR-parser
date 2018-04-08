@@ -1,6 +1,6 @@
 from json import dumps
 from .segmenter import Segmenter
-from .ie_modules import get_name, get_email, get_phone, get_address
+from .ie_modules import get_name, get_email, get_phone, get_address, label_from
 
 
 class Extracter:
@@ -43,7 +43,16 @@ class Extracter:
             self.contact_dict["title"] += item + " "
 
     def extract_skill(self):
-        pass
+        # Use what found before the : as label
+        skill_seg = self.seg.get_skill()
+        for item in skill_seg:
+            pos = item.find(":")
+            if pos != -1:
+                label = label_from(item[0:pos])
+                if label:
+                    label_list = [w.strip(" •:") for w in item[pos:].split(",")]
+                    label_list = [w for w in label_list if w]
+                    self.skill_dict[label] = label_list
 
     def extract_educ(self):
         pass
@@ -58,16 +67,16 @@ class Extracter:
         pass
 
     # Getters
-
     def get_json(self, arg="all"):  # use kwargs
         if arg == "contact":
-            json_contact = dumps(self.contact_dict, indent=2, ensure_ascii=False)
-            return json_contact
+            _json = dumps(self.contact_dict, indent=2, ensure_ascii=False)
+        elif arg == "skill":
+            _json = dumps(self.skill_dict, indent=2, ensure_ascii=False)
+
+        return _json
 
     def get_dict(self, arg="all"):
         if arg == "contact":
             return self.contact_dict
-
-# extracter = Extracter('CV-FR.pdf')
-# extracter.extract_contact()
-# print(extracter.get_json("contact"))
+        if arg == "skill":
+            return self.skill_dict

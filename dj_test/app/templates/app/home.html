@@ -1,25 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'app/style.css' %}" />
+{% extends "app/base.html" %}
 
-</head>
-<body>
+{% block Homepage %}EHR homepage{% endblock %}
 
-<div class="topnav">
-  <a class="active" href="../">Home</a>
-  <a href="../candidate/">Candidate</a>
-  <a href="../joboffer/">Job offer</a>
-  <a href="../database/">Database</a>
-</div>
-
+{% block content %}
 <div style="padding-left:16px">
   <h2>EHR Services</h2>
   <p>ENSI Design and Dev project.<br>
   Resume parser and job offer matcher.</p>
 </div>
+{% endblock %}
 
-</body>
-</html>

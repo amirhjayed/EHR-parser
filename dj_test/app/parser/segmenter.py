@@ -7,8 +7,6 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfpage import PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
-# from conv_layout_pdf import layout_pdf
-# from ie_modules import ie
 
 from nltk import word_tokenize
 from nltk.stem import PorterStemmer

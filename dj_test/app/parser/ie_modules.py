@@ -57,3 +57,11 @@ def get_phone(contact_list):
                 n += c
         if len(n) > 7:
             return index, n
+
+
+def label_from(item):
+    # Probably like isHeader, Need some kind of benchmark
+    # Discuss This
+    """ Implement this """
+    item = item.strip(" •:")
+    return item
