@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static  'app/style.css' %}" />
+    <title>{% block title %} EHR Services {% endblock %}</title>
+</head>
+
+<body>
+    {% block navbar %}
+    <div class="topnav">
+      <a href="/">Home</a>
+      <a href="/candidate/">Candidate space</a>
+      <a href="/recruter/">Recruter space</a>
+    </div>
+    {% endblock %}
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
