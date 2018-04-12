@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>submit</title>
-</head>
-<body>
-    <h1>Submit job </h1>
-    <p>{{ valid }}</p>
-    <p>{{ cleaned_data }}</p>
-    <p>{{ req_json }}</p>
-    <p>{{ jo }}</p>
-</body>
-</html>
+{% extends "app/base.html" %}
+
+{% block Homepage %} EHR homepage{% endblock %}
+
+{% block content %}
+<div style="padding-left:16px">
+<h2>Recruter space</h2>
+{% if request.user.username %}
+<div>Username : {{request.user.username}}</div>
+<a href="/recruter/logout/">logout</a>
+<br>
+  <h3>Job submited</h3>
+<br>
+{% endif %}
+</div>
+{% endblock %}

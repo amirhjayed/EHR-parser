@@ -1,24 +1,19 @@
 from django import forms
-from .models import Recruter
+from .models import Recruter, JobOffer
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-class JobOfferForm(forms.Form):
-    # Required fields:
-    title = forms.CharField(label="Job title", max_length=100)
-    degree = forms.CharField(label="Education Level", max_length=10)
-    experience = forms.IntegerField(label="Experience years")
-    salary = forms.CharField(label="Salary range", max_length=20)
-    schedule = forms.CharField(label="Working schedule", max_length=20)
-    # Requirements:
-    txt_arr = forms.Textarea(attrs={'rows': 2, 'cols': 40})
-    technologies = forms.CharField(max_length=50, required=False, widget=txt_arr)
-    languages = forms.CharField(max_length=50, required=False, widget=txt_arr)
-    qualities = forms.CharField(max_length=50, required=False, widget=txt_arr)
-
-    # Brief job description
-    description = forms.CharField(widget=forms.Textarea, required=False)
+class JobOfferForm(forms.ModelForm):
+    class Meta():
+        model = JobOffer
+        exclude = ['recruter']
+        txt_arr = forms.Textarea(attrs={'rows': 2, 'cols': 40})
+        widgets = {
+            'technologies': txt_arr,
+            'languages': txt_arr,
+            'qualities': txt_arr
+        }
 
 
 class UserForm(UserCreationForm):

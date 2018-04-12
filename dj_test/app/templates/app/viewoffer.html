@@ -3,9 +3,19 @@
 {% block Homepage %}View offer{% endblock %}
 
 {% block content %}
+<br>
 <div style="padding-left:16px">
+<div>Username : {{request.user.username}}</div>
+<a href="/recruter/logout/">logout</a>
   <h2>Recruter space</h2>
-  <h5>View offer</h5>
-  <p>Not implemented yet</p>
+  <h3>View offer</h3>
+    <h4>Offers</h4>
+    <ul>
+        {% for offer in object_list %}
+        {% if offer.recruter.user.username == request.user.username %}
+            <li><a href="/recruter/view_offer/{{offer.id}}/">{{offer.title}}</a></li>
+        {% endif %}
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}

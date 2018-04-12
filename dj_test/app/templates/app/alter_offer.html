@@ -1,0 +1,30 @@
+{% extends "app/base.html" %}
+
+{% block Homepage %} EHR homepage{% endblock %}
+
+{% block content %}
+<div style="padding-left:16px">
+<h2>Recruter space</h2>
+{% if request.user.username %}
+<div>Username : {{request.user.username}}</div>
+<a href="/recruter/logout/">logout</a>
+<br>
+  <h3>Offer view</h3>
+  <form method="post">
+    {% csrf_token %}
+    <table>
+      {{ form }}
+    </table>
+    <input type="submit" name="update" value ='Update' >
+</form>
+   <form method="post">
+    {% csrf_token %}
+    <input type="submit"  name ='delete' value="Delete"/>
+</form>
+{% if post %}
+<br>
+<div style="padding-left:16px">Modification submitted </div>
+{% endif %}
+{% endif %}
+</div>
+{% endblock %}

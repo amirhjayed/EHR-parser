@@ -13,7 +13,8 @@ urlpatterns = [
     path('recruter/logout/', views.logout_view),
 
     path('recruter/job_offer/', views.JobOfferView.as_view(), name='Job offer'),
-    path('recruter/view_offer/', views.OfferView.as_view(), name='View offers'),
+    path('recruter/view_offer/', views.OfferListView.as_view(), name='View offers'),
+    path('recruter/view_offer/<int:offer_id>/', views.OfferFormView.as_view()),
     path('recruter/parse_cvs/', views.ParserView.as_view(), name='Batch parser'),
 
     path('recruter/job_offer/submit/', views.submit_jo, name='submit_jo'),
