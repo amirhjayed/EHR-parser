@@ -1,0 +1,17 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div style="padding-left:16px">
+<h2>Recruter space</h2>
+<div style="padding-left:16px">Get a best match here xoxo
+    <br>
+    L'offre:
+      {{ offer_id }}
+      {% for cand in candidates %}
+        <ul>
+            <li><a href="./{{cand.id}}">{{ cand.name }}</a></li>
+        </ul>
+      {% endfor %}
+</div>
+
+{% endblock %}

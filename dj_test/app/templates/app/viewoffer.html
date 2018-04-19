@@ -5,15 +5,13 @@
 {% block content %}
 <br>
 <div style="padding-left:16px">
-<div>Username : {{request.user.username}}</div>
-<a href="/recruter/logout/">logout</a>
-  <h2>Recruter space</h2>
+  <h2>Recruiter space</h2>
   <h3>View offer</h3>
     <h4>Offers</h4>
     <ul>
         {% for offer in object_list %}
-        {% if offer.recruter.user.username == request.user.username %}
-            <li><a href="/recruter/view_offer/{{offer.id}}/">{{offer.title}}</a></li>
+        {% if offer.recruiter.user.username == request.user.username %}
+            <li><a href="/recruiter/view_offer/{{offer.id}}/">{{offer.title}}</a></li>
         {% endif %}
         {% endfor %}
     </ul>

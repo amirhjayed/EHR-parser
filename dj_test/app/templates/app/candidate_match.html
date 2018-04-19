@@ -1,0 +1,25 @@
+{% extends "app/base.html" %}
+
+{% block Homepage %}Matched Candidate{% endblock %}
+
+{% block content %}
+<br>
+<div style="padding-left:16px">
+  <h2>Recruiter space</h2>
+  <h3>View Candidate</h3>
+    <form>
+        <fieldset disabled="disabled">
+            <table>
+              {{ form }}
+            </table>
+        </fieldset>
+    </form>
+</div>
+
+<div style="padding-left:16px">
+    <form action="./contact">
+        <button>Contact</button>
+    </form>
+</div>
+
+{% endblock %}

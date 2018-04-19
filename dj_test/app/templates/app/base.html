@@ -12,8 +12,16 @@
     <div class="topnav">
       <a href="/">Home</a>
       <a href="/candidate/">Candidate space</a>
-      <a href="/recruter/">Recruter space</a>
+      <a href="/recruiter/">Recruiter space</a>
     </div>
+{% if request.user.username %}
+<br>
+<div style="padding-left:16px">Username : {{request.user.username}}
+<br>
+<a href="/recruiter/logout/">logout</a>
+<br>
+</div>
+{%endif%}
     {% endblock %}
     <div id="content">
         {% block content %}{% endblock %}

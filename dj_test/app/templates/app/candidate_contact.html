@@ -1,0 +1,34 @@
+{% extends "app/base.html" %}
+
+{% block Homepage %}Matched Candidate{% endblock %}
+
+{% block content %}
+<br>
+<div style="padding-left:16px">
+  <h2>Recruiter space</h2>
+  <h3>Contact candidate</h3>
+
+    {% if post %}
+    <form>
+      <fieldset disabled="disabled">
+        <table>
+          {{ form }}
+        </table>
+      </fieldset>
+    </form>
+      <div>Email sent!</div>
+    {% endif %}
+
+    {% if get %}
+    <form method="post">
+    <fieldset>
+      <table>
+        {% csrf_token %}
+        {{ form }}
+      </table>
+    </fieldset>
+      <input type="submit" value="Send mail" name="send">
+    </form>
+    {% endif %}
+
+{% endblock %}

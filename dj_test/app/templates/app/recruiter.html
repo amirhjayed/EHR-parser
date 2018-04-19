@@ -4,26 +4,23 @@
 
 {% block content %}
 <div style="padding-left:16px">
-<h2>Recruter space</h2>
+<h2>Recruiter space</h2>
 {% if request.user.username %}
-<div>Username : {{request.user.username}}</div>
-<a href="/recruter/logout/">logout</a>
-<br>
 <table>
-  <form action="/recruter/job_offer/">
+  <form action="/recruiter/job_offer/">
     <input type="submit" value="Job offer" />
   </form>
 
-  <form action="/recruter/view_offer/">
+  <form action="/recruiter/view_offer/">
     <input type="submit" value="View offers"/>
   </form>
 
-  <form action="/recruter/parse_cvs/">
+  <form action="/recruiter/parse_cvs/">
     <input type="submit" value="Batch CV parsing"/>
   </form>
 {% else %}
-<a href="/recruter/signup/">sign-up</a>
-<a href="/recruter/login/">login</a>
+<a href="/recruiter/signup/">sign-up</a>
+<a href="/recruiter/login/">login</a>
 <h4>Login or create an account to access our services!</h4>
 {% endif %}
 <div style="padding-left:16px">
