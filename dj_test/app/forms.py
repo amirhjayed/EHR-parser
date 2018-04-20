@@ -10,6 +10,8 @@ class JobOfferForm(forms.ModelForm):
         exclude = ['recruiter']
         txt_arr = forms.Textarea(attrs={'rows': 2, 'cols': 40})
         widgets = {
+            'programming_languages': txt_arr,
+            'frameworks': txt_arr,
             'technologies': txt_arr,
             'languages': txt_arr,
             'qualities': txt_arr

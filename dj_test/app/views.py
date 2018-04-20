@@ -5,7 +5,7 @@ from .models import Candidate, JobOffer, Recruiter
 from django.core.files.storage import FileSystemStorage
 from .forms import JobOfferForm, RecruiterForm, UserForm, CandidateForm, ContactForm
 from django.contrib.auth import logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.mail import send_mail
 
 
@@ -73,6 +73,8 @@ def signup(request):
         pform = RecruiterForm(data=request.POST)
         if uform.is_valid() and pform.is_valid():
             user = uform.save()
+            group = Group.objects.get(name='recruiters')
+            group.user_set.add(user)
             profile = pform.save(commit=False)
             profile.user = user
             profile.save()
@@ -80,12 +82,12 @@ def signup(request):
     else:
         uform = UserForm()
         pform = RecruiterForm()
-        return render(request, 'app/signup.html', {'uform': uform, "pform": pform})
+        return render(request, 'app/recruiter_signup.html', {'uform': uform, "pform": pform})
 
 
 def logout_view(request):
     logout(request)
-    return redirect('/recruiter/')
+    return redirect('/')
 
 
 # Match View and utilities:
@@ -143,6 +145,19 @@ class CandidateContactView(View):
 # ~~~~~~~~~~~~~~~ #
 class CandidateView(generic.TemplateView):
     template_name = 'app/candidate.html'
+
+
+def signup_candidate(request):
+    if request.method == "POST":
+        uform = UserForm(data=request.POST)
+        if uform.is_valid:
+            user = uform.save()
+            group = Group.objects.get(name='candidates')
+            group.user_set.add(user)
+            return redirect('/candidate/')
+    else:
+        uform = UserForm()
+        return render(request, 'app/candidate_signup.html', {'uform': uform})
 
 
 def submit_cv(request):

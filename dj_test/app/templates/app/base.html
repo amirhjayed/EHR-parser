@@ -8,21 +8,25 @@
 </head>
 
 <body>
-    {% block navbar %}
     <div class="topnav">
       <a href="/">Home</a>
       <a href="/candidate/">Candidate space</a>
       <a href="/recruiter/">Recruiter space</a>
     </div>
+<div style="padding-left:16px">
+{% if user.groups.all.0.name == 'recruiters' %}
+  <br>
+  <div>Connected as a recruiter</div>
+{% endif %}
+
+{% if user.groups.all.0.name == 'candidates' %}
+  <br>
+   <p>Connected as a candidate</p>
+{% endif %}
 {% if request.user.username %}
-<br>
-<div style="padding-left:16px">Username : {{request.user.username}}
-<br>
-<a href="/recruiter/logout/">logout</a>
-<br>
-</div>
-{%endif%}
-    {% endblock %}
+  <div>user : {{request.user.username}}</div>
+  <a href="/recruiter/logout/">logout</a><br>
+{% endif %}
     <div id="content">
         {% block content %}{% endblock %}
     </div>

@@ -3,6 +3,7 @@
 {% block Homepage %}Candidate space{% endblock %}
 
 {% block content %}
+{% if user.groups.all.0.name == 'candidates' %}
 <div style="padding-left:16px">
   <h2>Candidate space</h2>
   <p>Upload you resume here.</p>
@@ -13,6 +14,11 @@
       <button type="submit">Upload</button>
     </div>
   </form>
+  {% else %}
+  <br><a href="/candidate/signup/">sign-up</a>
+  <a href="/candidate/login/">login</a><br>
+  Login or create a candidate account to access our services!
+  {% endif %}
 </div>
 {% endblock %}
 
