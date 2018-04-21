@@ -5,7 +5,8 @@
 {% block content %}
 <h2>Login</h2>
 <div style="padding-left:16px">
-  <form method="post">
+  <form
+   method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Login</button>

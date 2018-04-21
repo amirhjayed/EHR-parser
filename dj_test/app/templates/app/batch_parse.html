@@ -5,7 +5,22 @@
 {% block content %}
 <div style="padding-left:16px">
   <h2>Recruiter space</h2>
-  <h5>Batch CV parser</h5>
-  <p>Not implemented yet</p>
+  <h4>Batch CV parser</h5>
+
+  {% if form %}
+  <form action="" enctype="multipart/form-data" method="post">{% csrf_token %}
+    {{ form }}
+    <input type="submit" name="submit">
+  </form>
+  {% endif %}
+
+  {% if names %}
+  <p>The following candidates were added.</p>
+    <ul>
+      {% for n in names %}
+        <li>{{n}}</li>
+      {% endfor%}
+    </ul>
+  {% endif %}
 </div>
 {% endblock %}

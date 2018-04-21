@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 class Recruiter(models.Model):
     name = models.CharField(max_length=50)
+    domain = models.CharField(max_length=50, null=True)
     email = models.EmailField(null=True, unique=True)
     phone = models.CharField(max_length=15, null=True)
     location = models.CharField(max_length=200, null=True)

@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View, generic
 from .parser.extracter import Extracter
+from django.views.generic.edit import FormView
 from .models import Candidate, JobOffer, Recruiter
 from django.core.files.storage import FileSystemStorage
-from .forms import JobOfferForm, RecruiterForm, UserForm, CandidateForm, ContactForm
+from .forms import JobOfferForm, RecruiterForm, UserForm, CandidateForm, ContactForm, FileFieldForm
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, Group
 from django.core.mail import send_mail
@@ -23,10 +24,6 @@ class RecruiterView(generic.TemplateView):
 class OfferListView(generic.ListView):
     model = JobOffer
     template_name = 'app/viewoffer.html'
-
-
-class ParserView(generic.TemplateView):
-    template_name = 'app/batch_parse.html'
 
 
 class JobOfferView(View):
@@ -104,10 +101,22 @@ class MatchView(View):
     template_name = 'app/match.html'
 
     def get(self, request, offer_id):
-        order_func = get_match_function(offer_id)
-        candidates = list(Candidate.objects.all())
-        candidates.sort(key=order_func)
-        return render(request, self.template_name, {'offer_id': offer_id, 'candidates': candidates})
+        offer = JobOffer.objects.get(id=offer_id)
+        if request.GET.get('db') == 'yours':
+            order_func = get_match_function(offer_id)
+            uid = User.objects.get(id=request.user.id)
+            recruiter = Recruiter.objects.get(user_id=uid)
+            candidates = list(Candidate.objects.all().filter(recruiter_id=recruiter.id))
+            candidates.sort(key=order_func)
+            return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
+        elif request.GET.get('db') == 'ours':
+            order_func = get_match_function(offer_id)
+            candidates = list(Candidate.objects.all().filter(recruiter_id=None))
+            candidates.sort(key=order_func)
+            return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
+        else:
+            offer = JobOffer.objects.get(id=offer_id)
+            return render(request, self.template_name, {'offer': offer.title})
 
 
 class CandidateMatchView(View):
@@ -138,6 +147,42 @@ class CandidateContactView(View):
                   fail_silently=False
                   )
         return render(request, self.template_name, {'form': form, 'post': 'post'})
+
+
+# Batch parse
+def handle_uploaded_file(f, fs, uid):
+    filename = fs.save(f.name, f)
+    uploaded_file_url = fs.location + "/" + filename
+    extracter = Extracter(uploaded_file_url)
+    extracter.extract_contact()
+
+    recruiter = Recruiter.objects.get(user_id=uid)
+    contact_dict = extracter.get_dict("contact")
+    candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
+    candidate.recruiter = recruiter
+    name = candidate.name
+    candidate.save()
+    return name
+
+
+class BatchParserView(FormView):
+    form_class = FileFieldForm
+    template_name = 'app/batch_parse.html'
+    success_url = './'
+
+    def post(self, request, *args, **kwargs):
+        names = []
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('file_field')
+        if form.is_valid():
+            fs = FileSystemStorage()
+            for f in files:
+                names.append(handle_uploaded_file(f, fs, request.user.id))
+            print(names)
+            return render(request, self.template_name, {'names': names})
+        else:
+            return self.form_invalid(form)
 
 
 # ~~~~~~~~~~~~~~~ #

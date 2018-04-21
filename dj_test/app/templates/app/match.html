@@ -2,11 +2,19 @@
 
 {% block content %}
 <div style="padding-left:16px">
-<h2>Recruter space</h2>
-<div style="padding-left:16px">Get a best match here xoxo
+<h2>Recruiter space</h2>
+<div style="padding-left:16px">
+<form>
+  <div>Select from who's candidates</div>
+  <select name="db">
+    <option value="yours">Yours</option>
+    <option value="ours">Ours</option>
+  </select>
+  <input type="submit" value="Match">
+</form>
     <br>
     L'offre:
-      {{ offer_id }}
+      {{ offer }}
       {% for cand in candidates %}
         <ul>
             <li><a href="./{{cand.id}}">{{ cand.name }}</a></li>
