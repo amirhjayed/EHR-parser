@@ -188,8 +188,34 @@ class BatchParserView(FormView):
 # ~~~~~~~~~~~~~~~ #
 # Candidate space #
 # ~~~~~~~~~~~~~~~ #
-class CandidateView(generic.TemplateView):
+class CandidateView(View):
     template_name = 'app/candidate.html'
+
+    def get(self, request):
+        return render(request, self.template_name, {'get': 'yes'})
+
+    def post(self, request):
+        if request.FILES.get('cv_file'):
+            myfile = request.FILES['cv_file']
+            fs = FileSystemStorage()
+            lang = request.POST.get('lang')
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.location + "/" + filename
+            extracter = Extracter(uploaded_file_url, lang)
+            extracter.extract_contact()
+            contact_dict = extracter.get_dict("contact")
+            contact_json = extracter.get_json("contact")
+            candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
+            candidate.save()
+
+            return render(request, self.template_name, {
+                # 'uploaded_file_url': uploaded_file_url,
+                # 'contact_json': contact_json,
+                'post': 'yes',
+                'lang': lang
+            })
+        else:
+            return render(request, self.template_name, {'get': 'yes'})
 
 
 def signup_candidate(request):
@@ -203,23 +229,3 @@ def signup_candidate(request):
     else:
         uform = UserForm()
         return render(request, 'app/candidate_signup.html', {'uform': uform})
-
-
-def submit_cv(request):
-    if request.method == 'POST' and request.FILES['cv_file']:
-        myfile = request.FILES['cv_file']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-
-        uploaded_file_url = fs.location + "/" + filename
-        extracter = Extracter(uploaded_file_url)
-        extracter.extract_contact()
-        contact_dict = extracter.get_dict("contact")
-        contact_json = extracter.get_json("contact")
-        candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
-        candidate.save()
-
-        return render(request, 'app/submit_cv.html', {
-            'uploaded_file_url': uploaded_file_url,
-            'contact_json': contact_json
-        })

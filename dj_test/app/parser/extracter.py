@@ -4,8 +4,9 @@ from .ie_modules import get_name, get_email, get_phone, get_address, label_from
 
 
 class Extracter:
-    def __init__(self, fpath):
-        self.seg = Segmenter(fpath)
+    def __init__(self, fpath, lang):
+        self.lang = lang
+        self.seg = Segmenter(fpath, lang)
         self.seg.layout_pdf()
 
         # Dictionaries to store extracted informations

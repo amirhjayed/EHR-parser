@@ -6,14 +6,32 @@
 {% if user.groups.all.0.name == 'candidates' %}
 <div style="padding-left:16px">
   <h2>Candidate space</h2>
+  {% if get %}
   <p>Upload you resume here.</p>
-  <form action="./submit/" method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <select name="lang">
+      <option>Fr</option>
+      <option>En</option>
+    </select>
     <input type="File" name="cv_file">
     <div>
-      <button type="submit">Upload</button>
+      <button type="submit">Submit</button>
     </div>
   </form>
+  {% endif %}
+
+  {% if post %}
+    <h4>
+      Submit succesful, we may add some features to what you can do now in the future.<br>
+      {{ lang }}
+      {% if uploaded_file_url %}
+        <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+      {% endif %}
+    </h4>
+    <p>{{ contact_json }}</p>
+  {% endif %}
+
   {% else %}
   <br><a href="/candidate/signup/">sign-up</a>
   <a href="/candidate/login/">login</a><br>

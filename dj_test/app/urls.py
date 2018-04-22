@@ -33,6 +33,5 @@ urlpatterns = [
     # ~~~~~~~~~~~~~~~
     path('candidate/', views.CandidateView.as_view(), name='candidate'),
     path('candidate/signup/', views.signup_candidate, name="signup"),
-    path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='candidate/'), name="signin"),
-    path('candidate/submit/', views.submit_cv, name='submit_cv'),
+    path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='candidate/'), name="signin")
 ]

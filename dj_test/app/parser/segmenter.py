@@ -2,59 +2,47 @@ from json import dumps
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfdevice import PDFDevice
-from pdfminer.layout import LAParams, LTTextBox, LTTextLine
+from pdfminer.layout import LAParams, LTTextBox, LTTextLine, LTLine
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfpage import PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 
-from nltk import word_tokenize
-from nltk.stem import PorterStemmer
-
-
-ps = PorterStemmer()
-
-
-def isHeader(sentence):
-    # Maybe store this in CSV files
-    # Ignore french ? (NLTk lacks french support)
-    kwDict = {
-        **dict.fromkeys(['profil', 'summari', 'objective'], 'profil'),
-        **dict.fromkeys(['skill', 'Techniques', 'Compétences', 'Langues', 'outil'], 'skill'),
-        **dict.fromkeys(['career', 'work', 'experience', 'Expériences'], 'career'),
-        **dict.fromkeys(['educ', 'Formation', 'Education'], 'educ'),
-        **dict.fromkeys(['interest', 'activ', 'Interêt'], 'interest'),
-        **dict.fromkeys(['referenc'], 'references')
-    }
-    words = word_tokenize(sentence)
-    # words = [ps.stem(w) for w in words] // Not for french
-    i = set(words) & set(kwDict.keys())
-    if i:
-        return(kwDict[i.pop()])
+import csv
 
 
 class Segmenter:
-    def __init__(self, fpath):
+    def __init__(self, fpath, lang='En'):
         self.fp = open(fpath, 'rb')
+
+        if lang == 'Fr':
+            csvfile = open('data/fr_headers.csv', 'r')
+            self.headers = csv.reader(csvfile)
+        else:
+            csvfile = open('data/en_headers.csv', 'r')
+            self.headers = csv.reader(csvfile)
+
         self.segDict = {
             'contact': [],
-            'skill': [],
-            'educ': [],
             'career': [],
+            'education': [],
+            'skill': [],
             'interest': [],
-            'references': []
         }
         self.seg_flag = False
 
     def layout_pdf(self):
-        """
-            Performs layout analysis
-            and fills seg lists
-        """
-        h1 = 'contact'
+
+        # Headers
+        headersDict = {
+            **dict.fromkeys(next(self.headers), 'profil'),
+            **dict.fromkeys(next(self.headers), 'career'),
+            **dict.fromkeys(next(self.headers), 'education'),
+            **dict.fromkeys(next(self.headers), 'skill'),
+            **dict.fromkeys(next(self.headers), 'interest'),
+        }
         parser = PDFParser(self.fp)
         document = PDFDocument(parser)
-
         if not document.is_extractable:
             raise PDFTextExtractionNotAllowed
 
@@ -63,25 +51,77 @@ class Segmenter:
         laparams = LAParams()
         device = PDFPageAggregator(rsrcmgr, laparams=laparams)
         interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+        current_header = 'contact'
+        retstr = ''
         for page in PDFPage.create_pages(document):
             interpreter.process_page(page)
             layout = device.get_result()
-            for lt_obj in layout:
-                if isinstance(lt_obj, LTTextBox):
-                    for lt_text in lt_obj._objs:
-                        if isinstance(lt_text, LTTextLine):
-                            retstr = lt_text.get_text()
-                            retstr = retstr.strip()
-                            lt_text_list = list(lt_text)
-                            if lt_text_list[-2].fontname.endswith("Bold"):
-                                h = isHeader(retstr)
-                                if h:
-                                    h1 = h
+            line_count = sum(isinstance(x, LTLine) for x in layout)
+            if line_count > 3:
+                # Segmentation by Line separators (LT Line)
+
+                # OPTOMIZE THIS !
+                layout_expanded = []
+                for obj in layout:
+                    if isinstance(obj, LTTextBox):
+                        for line in obj._objs:
+                            if isinstance(line, LTTextLine):
+                                layout_expanded.append(line)
+                    elif isinstance(obj, LTLine):
+                        layout_expanded.append(obj)
+
+                layout_expanded = sorted(layout_expanded, key=lambda o: -o.y1)
+                for lt_obj in layout_expanded:
+                    if isinstance(lt_obj, LTLine):
+                        potential_header = retstr.upper().rstrip('S')
+                        potential_header = headersDict.get(potential_header)
+                        if potential_header:
+                            if self.segDict[current_header]:
+                                self.segDict[current_header].pop()
+                            current_header = potential_header
+                    elif isinstance(lt_obj, LTTextLine):
+                        retstr = lt_obj.get_text()
+                        retstr = retstr.strip()
+                        self.segDict[current_header].append(retstr)
+
+            else:
+                # Segmentation by checking for BOLD or all UPPER
+
+                # Potential headers need some preprocessig:
+                #   -- Ponctuations
+                #   -- rstrip('S')
+                #   -- avoid redundancy
+
+                for lt_obj in layout:
+                    if isinstance(lt_obj, LTTextBox):
+                        for lt_text in lt_obj._objs:
+                            if isinstance(lt_text, LTTextLine):
+                                retstr = lt_text.get_text()
+                                retstr = retstr.strip()
+                                lt_text_list = list(lt_text)
+                                # Segmentaion happens here :
+                                if lt_text_list[-2].fontname.endswith("Bold"):
+                                    # Check if bold
+                                    potential_header = retstr.upper()
+                                    potential_header = headersDict.get(potential_header)
+                                    if potential_header:
+                                        current_header = potential_header
+                                    else:
+                                        self.segDict[current_header].append(retstr)
+                                elif retstr.isupper():
+                                    # Check if upper
+                                    potential_header = retstr.upper().rstrip('S')
+                                    potential_header = headersDict.get(potential_header)
+                                    if potential_header:
+                                        current_header = potential_header
+                                    else:
+                                        self.segDict[current_header].append(retstr)
                                 else:
-                                    self.segDict[h1].append(retstr)
-                            else:
-                                if(retstr):
-                                    self.segDict[h1].append(retstr)
+                                    # it's not a header, append it to current seg
+                                    if(retstr):
+                                        self.segDict[current_header].append(retstr)
+
         self.seg_flag = True
 
     def get_contact(self):
@@ -91,16 +131,13 @@ class Segmenter:
         return self.segDict['skill']
 
     def get_educ(self):
-        return self.segDict['educ']
+        return self.segDict['education']
 
     def get_career(self):
         return self.segDict['career']
 
     def get_interest(self):
         return self.segDict['interest']
-
-    def get_references(self):
-        return self.segDict['references']
 
     def get_json(self):
         if not self.seg_flag:
