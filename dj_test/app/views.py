@@ -8,6 +8,7 @@ from .forms import JobOfferForm, RecruiterForm, UserForm, CandidateForm, Contact
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, Group
 from django.core.mail import send_mail
+from .matcher.get_score import get_score
 
 
 class HomeView(generic.TemplateView):
@@ -89,10 +90,9 @@ def logout_view(request):
 
 # Match View and utilities:
 def get_match_function(offer_id):
-    # NOT IMPLEMENTED #
     def func(candidate):
         offer = JobOffer.objects.get(id=offer_id)
-        score = offer.experience - candidate.id
+        score = get_score(offer, candidate)
         return score
     return func
 
@@ -102,17 +102,18 @@ class MatchView(View):
 
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
+
         if request.GET.get('db') == 'yours':
             order_func = get_match_function(offer_id)
             uid = User.objects.get(id=request.user.id)
             recruiter = Recruiter.objects.get(user_id=uid)
             candidates = list(Candidate.objects.all().filter(recruiter_id=recruiter.id))
-            candidates.sort(key=order_func)
+            candidates.sort(key=order_func, reverse=True)
             return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
         elif request.GET.get('db') == 'ours':
             order_func = get_match_function(offer_id)
             candidates = list(Candidate.objects.all().filter(recruiter_id=None))
-            candidates.sort(key=order_func)
+            candidates.sort(key=order_func, reverse=True)
             return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
         else:
             offer = JobOffer.objects.get(id=offer_id)
@@ -204,7 +205,7 @@ class CandidateView(View):
             extracter = Extracter(uploaded_file_url, lang)
             extracter.extract_contact()
             contact_dict = extracter.get_dict("contact")
-            contact_json = extracter.get_json("contact")
+            # contact_json = extracter.get_json("contact")
             candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
             candidate.save()
 

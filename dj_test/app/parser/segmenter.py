@@ -16,10 +16,10 @@ class Segmenter:
         self.fp = open(fpath, 'rb')
 
         if lang == 'Fr':
-            csvfile = open('data/fr_headers.csv', 'r')
+            csvfile = open('/home/amir_h/PCD-Related/EHR-parser/dj_test/app/parser/data/fr_headers.csv', 'r')
             self.headers = csv.reader(csvfile)
         else:
-            csvfile = open('data/en_headers.csv', 'r')
+            csvfile = open('/home/amir_h/PCD-Related/EHR-parser/dj_test/app/parser/data/en_headers.csv', 'r')
             self.headers = csv.reader(csvfile)
 
         self.segDict = {
