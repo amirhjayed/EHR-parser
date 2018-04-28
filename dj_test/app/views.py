@@ -203,14 +203,14 @@ class CandidateView(View):
             filename = fs.save(myfile.name, myfile)
             uploaded_file_url = fs.location + "/" + filename
             extracter = Extracter(uploaded_file_url, lang)
-            extracter.extract_contact()
-            contact_dict = extracter.get_dict("contact")
-            # contact_json = extracter.get_json("contact")
-            candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
+            extracted_dict = extracter.get_dict()
+
+            # Need some validation here
+            candidate = Candidate(**extracted_dict, degree=extracter.degree, experience=extracter.experience, cv_ref=uploaded_file_url)
             candidate.save()
 
             return render(request, self.template_name, {
-                # 'uploaded_file_url': uploaded_file_url,
+                'uploaded_file_url': uploaded_file_url,
                 # 'contact_json': contact_json,
                 'post': 'yes',
                 'lang': lang

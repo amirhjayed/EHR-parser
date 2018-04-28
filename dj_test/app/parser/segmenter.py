@@ -61,7 +61,6 @@ class Segmenter:
             if line_count > 3:
                 # Segmentation by Line separators (LT Line)
 
-                # OPTOMIZE THIS !
                 layout_expanded = []
                 for obj in layout:
                     if isinstance(obj, LTTextBox):
@@ -130,7 +129,7 @@ class Segmenter:
     def get_skill(self):
         return self.segDict['skill']
 
-    def get_educ(self):
+    def get_education(self):
         return self.segDict['education']
 
     def get_career(self):
@@ -144,3 +143,8 @@ class Segmenter:
             self.layout_pdf()
         seg_json = dumps(self.segDict, indent=2, ensure_ascii=False)
         return seg_json
+
+
+if __name__ == '__main__':
+    seg = Segmenter('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/CV-FR.pdf', 'Fr')
+    print(seg.get_json())

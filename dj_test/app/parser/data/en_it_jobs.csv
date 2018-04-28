@@ -1,21 +1,23 @@
-SYSTEMS,ANALYST
-BUSINESS SYSTEMS,ENGINEER
-CRM BUSINESS,ARCHITECT
-SOFTWARE,DEVELOPER
-E-COMMERCE,ADMINISTRATOR
-ERP BUSINESS,MODELER
-TECHNICAL,SCIENTIST
-NETWORK,MANAGER
-WIRELESS,DESIGNER
-DATABASE,
-PROJECT,
-DATA,
-APPLICATION,
-SYSTEMS SECURITY,
-DATA SECURITY,
-INFORMATION SECURITY,
-UX,
-USER EXPERIENCE,
-TESTING,
-SOFTWARE QUALITY ASSURANCE,
-QA,
+domain,function
+systems,analyst
+business systems,engineer
+crm business,architect
+software,developer
+e-commerce,administrator
+erp business,modeler
+technical,scientist
+network,manager
+wireless,designer
+database,student
+project,
+data,
+application,
+systems security,
+data security,
+information security,
+ux,
+user experience,
+testing,
+software quality assurance,
+qa,
+embedded systems,

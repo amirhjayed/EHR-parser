@@ -23,9 +23,13 @@ class JobOffer(models.Model):
     salary = models.CharField(max_length=20, null=True)
     degree = models.CharField(max_length=50, null=True)
     experience = models.IntegerField(default=0)
-    programming = models.CharField(max_length=100, null=True, blank=True)
-    frameworks = models.CharField(max_length=100, null=True, blank=True)
+
+    # Skills:
+    programming_languages = models.CharField(max_length=100, null=True, blank=True)
+    programming_frameworks = models.CharField(max_length=100, null=True, blank=True)
+    technologies = models.CharField(max_length=100, null=True, blank=True)
     languages = models.CharField(max_length=100, null=True, blank=True)
+
     description = models.TextField(null=True)
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, null=True)
 
@@ -34,20 +38,26 @@ class JobOffer(models.Model):
 
 
 class Candidate(models.Model):
+
+    # Contact :
     name = models.CharField(unique=True, max_length=50)
-    email = models.EmailField(unique=True, null=True)
-    address = models.CharField(max_length=100, null=True)
-    phone = models.CharField(max_length=15, null=True)
-    title = models.CharField(max_length=100, null=True)
-    programming = models.CharField(max_length=200, null=True)
-    frameworks = models.CharField(max_length=200, null=True)
-    # SOFTWARE
-    languages = models.CharField(max_length=200, null=True)
-    degree = models.CharField(max_length=50, null=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    address = models.CharField(max_length=100, null=True, blank=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
+
+    # Skills :
+    programming_languages = models.CharField(max_length=200, null=True, blank=True)
+    programming_frameworks = models.CharField(max_length=200, null=True, blank=True)
+    technologies = models.CharField(max_length=200, null=True, blank=True)
+    languages = models.CharField(max_length=200, null=True, blank=True)
+
+    degree = models.CharField(max_length=50, null=True, blank=True)
     experience = models.IntegerField(default=0)
     career = JSONField(null=True, blank=True)
     training = JSONField(null=True, blank=True)
-    cv_ref = models.CharField(max_length=150, null=True)
+
+    cv_ref = models.CharField(max_length=150, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, null=True, blank=True)
 
