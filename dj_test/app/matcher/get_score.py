@@ -77,8 +77,8 @@ def get_score(offer, candidate):
     else:
         score += 100 * candidate.experience
 
-    score += 100 * intersection_ratio(offer.programming, candidate.programming)
-    score += 10 * intersection_ratio(offer.frameworks, candidate.frameworks)
+    score += 100 * intersection_ratio(offer.programming_languages, candidate.programming_languages)
+    score += 10 * intersection_ratio(offer.programming_frameworks, candidate.programming_frameworks)
     score += intersection_ratio(offer.languages, candidate.languages)
 
     print('offer : ', offer.title, 'candidate name :', candidate.name, 'score : ', score)

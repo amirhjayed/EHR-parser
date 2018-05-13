@@ -1,0 +1,36 @@
+{% extends "app/base.html" %}
+
+{% block Homepage %}Candidate space{% endblock %}
+
+{% block content %}
+
+<div style="padding-left:16px">
+  <h2>Candidate space</h2>
+  {% if get %}
+  <h4>Upload you resume here.</h4>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <select name="lang">
+      <option selected disabled>Resume language</option>
+      <option>French</option>
+      <option>English</option>
+    </select>
+    <input type="File" name="cv_file">
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if post %}
+    <h4>
+      Submit succesful, we may add some features to what you can do now in the future.<br>
+      {{ lang }}
+      {% if uploaded_file_url %}
+        <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+      {% endif %}
+    </h4>
+    <p>{{ contact_json }}</p>
+  {% endif %}
+</div>
+{% endblock %}

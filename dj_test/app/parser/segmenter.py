@@ -1,3 +1,4 @@
+# from django.conf import settings
 from json import dumps
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
@@ -60,7 +61,7 @@ class Segmenter:
             line_count = sum(isinstance(x, LTLine) for x in layout)
             if line_count > 3:
                 # Segmentation by Line separators (LT Line)
-
+                print("hi")
                 layout_expanded = []
                 for obj in layout:
                     if isinstance(obj, LTTextBox):
@@ -146,5 +147,5 @@ class Segmenter:
 
 
 if __name__ == '__main__':
-    seg = Segmenter('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/CV-FR.pdf', 'Fr')
+    seg = Segmenter('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/Resume_Hatem_Kortas.pdf', 'En')
     print(seg.get_json())

@@ -51,7 +51,7 @@ class OfferFormView(View):
             return render(request, self.template_name, {'form': form, 'post': 'post'})
         if request.POST.get('delete'):
             JobOffer.objects.get(id=offer_id).delete()
-            return redirect('/recruiter/view_offer/')
+            return redirect('/recruiter/offers/')
 
 
 def submit_jo(request):
@@ -195,28 +195,70 @@ class CandidateView(View):
     def get(self, request):
         return render(request, self.template_name, {'get': 'yes'})
 
+
+class Submit_cv_view(View):
+    template_name = 'app/submit_cv.html'
+
+    def get(self, request):
+        candidate = Candidate.objects.get(user=request.user.id)
+        if candidate:
+            message = 'You already uploaded a CV.\n Uploading again will override the old one.'
+        return render(request, self.template_name, {'get': 'yes', 'message': message})
+
     def post(self, request):
+        render_dict = {'post': 'yes'}
         if request.FILES.get('cv_file'):
             myfile = request.FILES['cv_file']
-            fs = FileSystemStorage()
-            lang = request.POST.get('lang')
-            filename = fs.save(myfile.name, myfile)
-            uploaded_file_url = fs.location + "/" + filename
-            extracter = Extracter(uploaded_file_url, lang)
-            extracted_dict = extracter.get_dict()
+            if myfile.endswith('pdf'):
+                fs = FileSystemStorage()
+                lang = request.POST.get('language')
+                filename = fs.save(myfile.name, myfile)
+                filepath = fs.location + "/" + filename
 
-            # Need some validation here
-            candidate = Candidate(**extracted_dict, degree=extracter.degree, experience=extracter.experience, cv_ref=uploaded_file_url)
-            candidate.save()
+                # Extracter will take the uploaded CV and return a dictionnary containing extracted info
+                extracter = Extracter(filepath, lang[0:2])
 
-            return render(request, self.template_name, {
-                'uploaded_file_url': uploaded_file_url,
-                # 'contact_json': contact_json,
-                'post': 'yes',
-                'lang': lang
-            })
-        else:
-            return render(request, self.template_name, {'get': 'yes'})
+                # stuff
+                if extracter.is_valid():
+                    candidate = Candidate.objects.get(user=request.user.id)
+
+                    # update existing candidate object
+                    if candidate:
+                        candidate.update(**extracter.get_dict(), cv_ref=filepath)
+
+                    # create new candidate object
+                    else:
+                        candidate = Candidate(**extracter.get_dict(), cv_ref=filepath, user=request.user)
+                        candidate.save()
+
+                        success_flag = True
+                        render_dict.update({
+                            'success': success_flag,
+                            'message': 'file location : ' + filepath,
+                        })
+
+                else:
+                    success_flag = False
+                    message = 'Sorry, we were unable to parse your CV.'
+                    render_dict.update({
+                        'success': success_flag,
+                        'message': message,
+                    })
+
+            else:
+                success_flag = False
+                message = 'Please upload a resume in PDF format'
+                render_dict = {
+                    'post': 'yes',
+                    'success': success_flag,
+                    'message': message
+                }
+
+            return render(request, self.template_name, render_dict)
+
+
+class Consult_offers_view(View):
+    pass
 
 
 def signup_candidate(request):

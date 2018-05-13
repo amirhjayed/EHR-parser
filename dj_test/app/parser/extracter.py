@@ -36,6 +36,7 @@ class Extracter:
         prog_skills = pd.read_csv(csvfile1)
         tech_skills = pd.read_csv(csvfile2)
         lang_skills = pd.read_csv(csvfile3)
+
         # Convert df into dicts
         self.prog_dict = prog_skills.melt().set_index('value').to_dict()['variable']
         self.tech_dict = tech_skills.melt().set_index('value').to_dict()['variable']

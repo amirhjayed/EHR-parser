@@ -3,10 +3,13 @@
 {% block Homepage %}EHR homepage{% endblock %}
 
 {% block content %}
-<div style="padding-left:16px">
-  <h2>EHR Services</h2>
-  <p>ENSI Design and Dev project.<br>
-  Resume parser and job offer matcher.</p>
-</div>
+    <div class="site-slider">
+        <ul class="bxslider">
+            <li>
+                {%load static%}
+                <img src="{% static 'app/images/slider/login1.jpg' %}">
+            </li>
+        </ul> <!-- /.bxslider -->
+    </div> <!-- /.site-slider -->
 {% endblock %}
 
