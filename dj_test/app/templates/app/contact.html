@@ -1,12 +1,13 @@
 {% extends "app/base.html" %}
 
-{% block Homepage %}Matched Candidate{% endblock %}
+{% block Homepage %}Contact{% endblock %}
 
 {% block content %}
 <br>
 <div style="padding-left:16px">
-  <h2>Recruiter space</h2>
-  <h3>Contact candidate</h3>
+
+  <h2>{{space}} space</h2>
+  <h3>Contact {{space}}</h3>
 
     {% if post %}
     <form>
@@ -30,5 +31,4 @@
       <input type="submit" value="Send mail" name="send">
     </form>
     {% endif %}
-
 {% endblock %}

@@ -15,22 +15,13 @@
   <input type="submit" value="View offers"/>
 </form>
 
-  {% if post %}
-    <h4>
-      Submit succesful<br>
-      {{ lang }}
-      {% if uploaded_file_url %}
-        <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-      {% endif %}
-    </h4>
-    <p>{{ contact_json }}</p>
-  {% endif %}
 
 {% else %}
-<br><a href="/candidate/signup/">sign-up</a>
-<a href="/candidate/login/">login</a><br>
-Login or create a candidate account to access our services!
+  <br><a href="/candidate/signup/">sign-up</a>
+  <a href="/candidate/login/">login</a><br>
+  Login or create a candidate account to access our services!
 {% endif %}
+
 </div>
 {% endblock %}
 

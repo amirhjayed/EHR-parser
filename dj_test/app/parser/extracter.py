@@ -152,6 +152,7 @@ class Extracter:
             return self.skill_dict
         elif arg == "career":
             return self.career_list
+
         elif arg == "candidate":
-            r = {**self.contact_dict, **self.skill_dict}
+            r = {**self.contact_dict, **self.skill_dict, 'degree': self.degree, 'experience': self.experience}
             return r

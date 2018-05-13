@@ -22,9 +22,14 @@ class RecruiterView(generic.TemplateView):
     template_name = 'app/recruiter.html'
 
 
-class OfferListView(generic.ListView):
-    model = JobOffer
+class OfferListView(View):
     template_name = 'app/viewoffer.html'
+
+    def get(self, request):
+        recruiter = Recruiter.objects.get(user=request.user.id)
+        offers = list(JobOffer.objects.all().filter(recruiter_id=recruiter.id))
+        offers = [(o.title.replace(',', ' '), o.id) for o in offers]
+        return render(request, self.template_name, {'offers': offers})
 
 
 class JobOfferView(View):
@@ -102,22 +107,23 @@ class MatchView(View):
 
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
-
         if request.GET.get('db') == 'yours':
             order_func = get_match_function(offer_id)
             uid = User.objects.get(id=request.user.id)
             recruiter = Recruiter.objects.get(user_id=uid)
             candidates = list(Candidate.objects.all().filter(recruiter_id=recruiter.id))
             candidates.sort(key=order_func, reverse=True)
-            return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
+            return render(request, self.template_name, {'offer': offer.title.replace(',', ' '), 'candidates': candidates})
+
         elif request.GET.get('db') == 'ours':
             order_func = get_match_function(offer_id)
             candidates = list(Candidate.objects.all().filter(recruiter_id=None))
             candidates.sort(key=order_func, reverse=True)
-            return render(request, self.template_name, {'offer': offer.title, 'candidates': candidates})
+            return render(request, self.template_name, {'offer': offer.title.replace(',', ' '), 'candidates': candidates})
+
         else:
             offer = JobOffer.objects.get(id=offer_id)
-            return render(request, self.template_name, {'offer': offer.title})
+            return render(request, self.template_name, {'offer': offer.title.replace(',', ' ')})
 
 
 class CandidateMatchView(View):
@@ -129,15 +135,15 @@ class CandidateMatchView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class CandidateContactView(View):
-    template_name = 'app/candidate_contact.html'
+class ContactCandidateView(View):
+    template_name = 'app/contact.html'
 
     def get(self, request, offer_id, cand_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(id=cand_id)
         data = {'subject': 'Job Offer', 'sender': offer.recruiter.email, 'reciever': cand.email, 'message': 'wanna work ?'}
         form = ContactForm(data)
-        return render(request, self.template_name, {'form': form, 'get': 'get'})
+        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Recruiter'})
 
     def post(self, request, offer_id, cand_id):
         form = ContactForm(request.POST)
@@ -147,7 +153,7 @@ class CandidateContactView(View):
                   [request.POST.get('reciever')],
                   fail_silently=False
                   )
-        return render(request, self.template_name, {'form': form, 'post': 'post'})
+        return render(request, self.template_name, {'form': form, 'post': 'post', 'space': 'Recruiter'})
 
 
 # Batch parse
@@ -180,7 +186,6 @@ class BatchParserView(FormView):
             fs = FileSystemStorage()
             for f in files:
                 names.append(handle_uploaded_file(f, fs, request.user.id))
-            print(names)
             return render(request, self.template_name, {'names': names})
         else:
             return self.form_invalid(form)
@@ -209,7 +214,7 @@ class Submit_cv_view(View):
         render_dict = {'post': 'yes'}
         if request.FILES.get('cv_file'):
             myfile = request.FILES['cv_file']
-            if myfile.endswith('pdf'):
+            if myfile.name.endswith('pdf'):
                 fs = FileSystemStorage()
                 lang = request.POST.get('language')
                 filename = fs.save(myfile.name, myfile)
@@ -225,23 +230,26 @@ class Submit_cv_view(View):
                     # update existing candidate object
                     if candidate:
                         candidate.update(**extracter.get_dict(), cv_ref=filepath)
+                        candidate.save()
+
+                        render_dict.update({
+                            'success': True,
+                            'message': 'Your profile was updated.\n File location : ' + filepath,
+                        })
 
                     # create new candidate object
                     else:
                         candidate = Candidate(**extracter.get_dict(), cv_ref=filepath, user=request.user)
                         candidate.save()
 
-                        success_flag = True
                         render_dict.update({
-                            'success': success_flag,
-                            'message': 'file location : ' + filepath,
+                            'success': True,
+                            'message': 'Candidate profile created.\nFile location : ' + filepath,
                         })
 
                 else:
-                    success_flag = False
                     message = 'Sorry, we were unable to parse your CV.'
                     render_dict.update({
-                        'success': success_flag,
                         'message': message,
                     })
 
@@ -257,8 +265,60 @@ class Submit_cv_view(View):
             return render(request, self.template_name, render_dict)
 
 
-class Consult_offers_view(View):
-    pass
+def get_match_function2(candidate_id):
+    def func(offer):
+        candidate = Candidate.objects.get(id=candidate_id)
+        score = get_score(offer, candidate)
+        return score
+    return func
+
+
+class ListOffersView(View):
+    template_name = 'app/list_offers.html'
+
+    def get(self, request):
+        candidate = Candidate.objects.get(user=request.user.id)
+        if candidate:
+            order_func = get_match_function2(candidate.id)
+            offers = list(JobOffer.objects.all())
+            offers.sort(key=order_func, reverse=True)
+            offers = [(o.title.replace(',', ' '), o.id) for o in offers]
+            print(offers)
+            return render(request, self.template_name, {'offers': offers})
+        else:
+            return render(request, self.template_name, {'message': 'Please upload a CV before using this feature.'})
+
+
+class ConsultOfferView(View):
+    template_name = 'app/consult_offer.html'
+
+    def get(self, request, offer_id):
+        offer = JobOffer.objects.get(id=offer_id)
+        form = JobOfferForm(instance=offer)
+        return render(request, self.template_name, {'form': form})
+
+
+# I'm repeating myself: ContactRecruiter and ContactCandidate are the same, fix this.
+class ContactRecruiterView(View):
+    template_name = 'app/contact.html'
+
+    def get(self, request, offer_id):
+        offer = JobOffer.objects.get(id=offer_id)
+        print(request.user.id)
+        cand = Candidate.objects.get(user=request.user.id)
+        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'I want to work.'}
+        form = ContactForm(data)
+        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Candidate'})
+
+    def post(self, request, offer_id):
+        form = ContactForm(request.POST)
+        send_mail(request.POST.get('subject'),
+                  request.POST.get('message'),
+                  'contact.ehr.services@gmail.com',
+                  [request.POST.get('reciever')],
+                  fail_silently=False
+                  )
+        return render(request, self.template_name, {'form': form, 'post': 'post', 'space': 'Candidate'})
 
 
 def signup_candidate(request):

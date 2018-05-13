@@ -22,7 +22,7 @@ urlpatterns = [
     path('recruiter/offers/<int:offer_id>/', views.OfferFormView.as_view()),
     path('recruiter/offers/<int:offer_id>/match/', views.MatchView.as_view()),
     path('recruiter/offers/<int:offer_id>/match/<int:cand_id>/', views.CandidateMatchView.as_view()),
-    path('recruiter/offers/<int:offer_id>/match/<int:cand_id>/contact/', views.CandidateContactView.as_view()),
+    path('recruiter/offers/<int:offer_id>/match/<int:cand_id>/contact/', views.ContactCandidateView.as_view()),
 
     # batch
     path('recruiter/batch/', views.BatchParserView.as_view(), name='Batch parser'),
@@ -33,7 +33,9 @@ urlpatterns = [
     # ~~~~~~~~~~~~~~~
     path('candidate/', views.CandidateView.as_view(), name='candidate'),
     path('candidate/submit-cv/', views.Submit_cv_view.as_view()),
-    path('candidate/view-offers/', views.Consult_offers_view.as_view()),
+    path('candidate/view-offers/', views.ListOffersView.as_view()),
+    path('candidate/view-offers/<int:offer_id>/', views.ConsultOfferView.as_view()),
+    path('candidate/view-offers/<int:offer_id>/contact/', views.ContactRecruiterView.as_view()),
 
     path('candidate/signup/', views.signup_candidate, name="signup"),
     path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='candidate/'), name="signin")

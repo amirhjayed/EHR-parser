@@ -7,10 +7,11 @@
 <div style="padding-left:16px">
   <h2>Candidate space</h2>
   {% if get %}
-  <h4>Upload you resume here.</h4>
+  <div style="font-size: 25px;font-weight:bold">Upload you resume here.<br></div>
+  <div>{{ message }}</div><br><br>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <select name="lang">
+    <select name="language">
       <option selected disabled>Resume language</option>
       <option>French</option>
       <option>English</option>
@@ -24,7 +25,7 @@
 
   {% if post %}
     <h4>
-      Submit succesful, we may add some features to what you can do now in the future.<br>
+      Submit succesful<br>
       {{ lang }}
       {% if uploaded_file_url %}
         <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
