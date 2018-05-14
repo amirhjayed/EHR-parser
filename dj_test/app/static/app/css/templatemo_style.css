@@ -9,12 +9,14 @@ http://www.templatemo.com/tm-401-sprint
 /* ==========================================================================
     HTML5 Boilerplate styles - h5bp.com (generated via initializr.com)
    ========================================================================== */
+
+
 html,
 button,
 input,
 select,
 textarea {
-  color: #222;
+  color: #333;
 }
 
 ::-moz-selection {
@@ -41,9 +43,9 @@ img {
 }
 
 fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
+  border: 1;
+  margin: 1;
+  padding: 1;
 }
 
 textarea {
@@ -110,10 +112,10 @@ form input[type="text"],
 form input[type="email"],
 form input[type="number"],
 form input[type="password"] {
-  background: #fff;
-  border: 1px solid #fff;
-  padding: 7px 10px;
-  width: 60%;
+  background: #eee;
+  border: 1px solid #ddd;
+  padding-bottom: 20px;
+  width: 95%;
 }
 form input[type="text"]:focus,
 form input[type="email"]:focus,
@@ -124,7 +126,6 @@ form input[type="password"]:focus {
 form .button {
   background: #fff;
   border: 1px solid #fff;
-  padding: 7px 20px;
   text-transform: uppercase;
 }
 form .button:focus, form .button:active {
@@ -211,7 +212,7 @@ form .button.yellow {
 html, body {
   font-size: 100%;
   width: 100%;
-  height: 100%;
+  height: 100 %;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   vertical-align: baseline;
@@ -220,7 +221,7 @@ html, body {
 body {
   font: 13px/21px "Open Sans", Arial, sans-serif;
   color: #838383;
-  background-color: white;
+  background-color: #fff;
 }
 
 a {

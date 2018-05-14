@@ -3,15 +3,15 @@
 {% block Homepage %}EHR homepage{% endblock %}
 
 {% block content %}
-<div style="padding-left:16px">
-<h2>Recruter space</h2>
-  <h3>Fill the job offer form</h3>
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444" >
+<h2 style="font-weight: bold;">Recruiter space</h2>
+  <div>Please fill the following form to post your job offer on our platform.</div>
   <form action="./submit/" method="post">
     {% csrf_token %}
-    <table>
+    <table style="margin: 0px auto; border-style: ;border-width: 1px"><br>
       {{ form }}
     </table>
-    <input type="submit" value="Submit" />
+    <input type="submit" value="Submit" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
 <div style="padding-left:16px">
 
 </div>

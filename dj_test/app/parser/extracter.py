@@ -47,7 +47,7 @@ class Extracter:
 
         # Dictionaries to store extracted informations
         self.contact_dict = {"name": "", "email": "", "address": "", "title": "", "phone": ""}
-        self.skill_dict = {"programming_languages": "", "programming_frameworks": "", "technologies": "", "languages": ""}
+        self.skill_dict_set = {"programming_languages": set(), "programming_frameworks": set(), "technologies": set(), "languages": set()}
         self.career_list = []
 
         # DO EXTRACTION
@@ -98,7 +98,9 @@ class Extracter:
                     key = self.lang_dict.get(tok)
 
                 if key:
-                    self.skill_dict[key] += ',' + tok
+                    self.skill_dict_set[key].add(tok)
+        self.skill_dict = {key: ' ' + ','.join(self.skill_dict_set[key]) for key in self.skill_dict_set}
+        print(self.skill_dict)
 
         # maybe a better way
         for key in self.skill_dict:

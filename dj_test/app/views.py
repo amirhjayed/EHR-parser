@@ -12,8 +12,20 @@ from .matcher.get_score import get_score
 from django.core.exceptions import ObjectDoesNotExist
 
 
-class HomeView(generic.TemplateView):
+class HomeView(View):
     template_name = 'app/home.html'
+
+    def get(self, request):
+
+        if request.user:
+            if request.user.groups.filter(name='candidates').exists():
+                return redirect('candidate/')
+            elif request.user.groups.filter(name='recruiters').exists():
+                return redirect('recruiter/')
+            else:
+                return render(request, self.template_name)
+        else:
+            return render(request, self.template_name)
 
 
 # ~~~~~~~~~~~~~~~

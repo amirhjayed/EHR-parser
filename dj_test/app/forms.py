@@ -8,13 +8,18 @@ class JobOfferForm(forms.ModelForm):
     class Meta():
         model = JobOffer
         exclude = ['recruiter']
-        txt_arr = forms.Textarea(attrs={'rows': 2, 'cols': 40})
+        labels = {
+            'experience': 'Experience (in months):'
+        }
+        txt_arr = forms.Textarea(attrs={'rows': 2, 'cols': 40, 'style': 'background: #eee; border: 1px solid #ddd;width:95%;'})
+        txt_arr1 = forms.Textarea(attrs={'rows': 6, 'cols': 40, 'style': 'background: #eee; border: 1px solid #ddd;width:95%;'})
         widgets = {
             'programming_languages': txt_arr,
-            'frameworks': txt_arr,
+            'programming_frameworks': txt_arr,
             'technologies': txt_arr,
             'languages': txt_arr,
-            'qualities': txt_arr
+            'qualities': txt_arr,
+            'description': txt_arr1
         }
 
 

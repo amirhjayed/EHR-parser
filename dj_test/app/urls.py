@@ -10,7 +10,7 @@ urlpatterns = [
     # ~~~~~~~~~~~~~~
     path('recruiter/', views.RecruiterView.as_view(), name='recruiter'),
     path('recruiter/signup/', views.signup, name="signup"),
-    path('recruiter/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='/recruiter/'), name="signin"),
+    path('recruiter/login/', auth_views.LoginView.as_view(template_name='app/login.html'), name="signin"),
     path('recruiter/logout/', views.logout_view),
 
     # Submit Job offer
@@ -38,5 +38,5 @@ urlpatterns = [
     path('candidate/consult-offers/<int:offer_id>/contact/', views.ContactRecruiterView.as_view()),
 
     path('candidate/signup/', views.signup_candidate, name="signup"),
-    path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='candidate/'), name="signin")
+    path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html'), name="signin")
 ]

@@ -62,20 +62,13 @@
     </div> <!-- /#front -->
 
 <div style="padding-left:50px;font-size: 20px">
-    <br><br><br><br><br><br><br>
-    {% if user.groups.all.0.name == 'recruiters' %}
-    <!-- <br> -->
-        <div>Connected as a recruiter</div>
-      {% endif %}
-
-      {% if user.groups.all.0.name == 'candidates' %}
-        <br>
-         <p>Connected as a candidate</p>
-      {% endif %}
+    <br><br><br><br><br>
+    <p align="right" style="padding-right: 50px; font-weight: small">
       {% if request.user.username %}
-        <div>user : {{request.user.username}}</div>
+        user : {{request.user.username}}<br>
         <a href="/recruiter/logout/">logout</a><br>
       {% endif %}
+      </p>
           {% block content %}{% endblock %}
           <!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
 </div>
