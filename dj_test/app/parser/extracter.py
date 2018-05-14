@@ -7,9 +7,9 @@ import pandas as pd
 
 
 class Extracter:
-    def __init__(self, fpath, lang):
+    def __init__(self, cv_file, lang):
         self.lang = lang
-        self.seg = Segmenter(fpath, lang)
+        self.seg = Segmenter(cv_file, lang)
         self.seg.layout_pdf()
 
         # Load job titles and degrees
@@ -116,14 +116,15 @@ class Extracter:
         career_seg = self.seg.get_career()
         career_items_dict = itemize_seg(career_seg, self.lang)
         for time in career_items_dict:
-            months_duration = get_duration(time)
-            experience += months_duration  # This if sum of exp
-            career_item = {
-                "title": "",
-                "duration": months_duration
-            }
-            career_item["title"] = get_title_career(career_items_dict[time], self.title_dict)
-            self.career_list.append(career_item)
+            if time:
+                months_duration = get_duration(time)
+                experience += months_duration  # This if sum of exp
+                career_item = {
+                    "title": "",
+                    "duration": months_duration
+                }
+                career_item["title"] = get_title_career(career_items_dict[time], self.title_dict)
+                self.career_list.append(career_item)
 
         self.experience = experience
 
@@ -156,3 +157,12 @@ class Extracter:
         elif arg == "candidate":
             r = {**self.contact_dict, **self.skill_dict, 'degree': self.degree, 'experience': self.experience}
             return r
+
+    def is_valid(self):
+        if not self.seg.is_valid():
+            return False
+        else:
+            if True:
+                return True
+            else:
+                return True

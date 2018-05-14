@@ -4,6 +4,7 @@
 <div style="padding-left:16px">
 <h2>Candidate space</h2>
 <div style="padding-left:16px">
+{% if not message %}
 {% if offers %}
     Offers List
       {{ offer }}
@@ -12,6 +13,9 @@
             <li><a href="./{{offer.1}}/">{{ offer.0 }}</a></li>
         </ul>
       {% endfor %}
+{% endif %}
+{% else %}
+ {{ message }}
 {% endif %}
 </div>
 

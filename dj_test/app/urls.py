@@ -33,9 +33,9 @@ urlpatterns = [
     # ~~~~~~~~~~~~~~~
     path('candidate/', views.CandidateView.as_view(), name='candidate'),
     path('candidate/submit-cv/', views.Submit_cv_view.as_view()),
-    path('candidate/view-offers/', views.ListOffersView.as_view()),
-    path('candidate/view-offers/<int:offer_id>/', views.ConsultOfferView.as_view()),
-    path('candidate/view-offers/<int:offer_id>/contact/', views.ContactRecruiterView.as_view()),
+    path('candidate/consult-offers/', views.ListOffersView.as_view()),
+    path('candidate/consult-offers/<int:offer_id>/', views.ConsultOfferView.as_view()),
+    path('candidate/consult-offers/<int:offer_id>/contact/', views.ContactRecruiterView.as_view()),
 
     path('candidate/signup/', views.signup_candidate, name="signup"),
     path('candidate/login/', auth_views.LoginView.as_view(template_name='app/login.html', redirect_field_name='candidate/'), name="signin")

@@ -1,5 +1,6 @@
 from nltk.corpus import wordnet as wn
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus.reader.wordnet import WordNetError
 wn_lemmatizer = WordNetLemmatizer()
 
 
@@ -44,10 +45,14 @@ def get_similarity(offer_title, candidate_title):
     candidate_domain, candidate_funct = lemmatize_title(candidate_title)
 
     # get wordnet synonyme sets
-    offer_domain = [wn.synset(w + '.n.01') for w in offer_domain]
-    offer_funct = [wn.synset(w + '.n.01') for w in offer_funct]
-    candidate_domain = [wn.synset(w + '.n.01') for w in candidate_domain]
-    candidate_funct = [wn.synset(w + '.n.01') for w in candidate_funct]
+    try:
+        offer_domain = [wn.synset(w + '.n.01') for w in offer_domain]
+        offer_funct = [wn.synset(w + '.n.01') for w in offer_funct]
+        candidate_domain = [wn.synset(w + '.n.01') for w in candidate_domain]
+        candidate_funct = [wn.synset(w + '.n.01') for w in candidate_funct]
+    except WordNetError:
+        # Exceptions happen because of lack of french support
+        return 0.3
 
     # get score by calculating similarity and returning it
     # the 3/4 and 1/4 factors are to highlight the importance of domain over function
@@ -69,16 +74,16 @@ def get_score(offer, candidate):
     score = 0
 
     # Degree and experience equally important.
-    score += 10000 * get_similarity(offer.title, candidate.title)
-    if offer.degree == candidate.degree:
-        score += 1000
+    score += 1000000 * get_similarity(offer.title, candidate.title)
     if offer.experience != 0:
-        score += 1000 * min((candidate.experience / offer.experience), 1)
+        score += 100000 * min((candidate.experience / offer.experience), 1)
     else:
         score += 100 * candidate.experience
-
-    score += 100 * intersection_ratio(offer.programming_languages, candidate.programming_languages)
-    score += 10 * intersection_ratio(offer.programming_frameworks, candidate.programming_frameworks)
+    if offer.degree == candidate.degree:
+        score += 10000
+    score += 1000 * intersection_ratio(offer.programming_languages, candidate.programming_languages)
+    score += 100 * intersection_ratio(offer.programming_frameworks, candidate.programming_frameworks)
+    score += 10 * intersection_ratio(offer.technologies, candidate.technologies)
     score += intersection_ratio(offer.languages, candidate.languages)
 
     print('offer : ', offer.title, 'candidate name :', candidate.name, 'score : ', score)

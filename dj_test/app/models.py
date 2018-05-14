@@ -40,8 +40,8 @@ class JobOffer(models.Model):
 class Candidate(models.Model):
 
     # Contact :
-    name = models.CharField(unique=True, max_length=50)
-    email = models.EmailField(unique=True, null=True, blank=True)
+    name = models.CharField(max_length=50)
+    email = models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
@@ -57,7 +57,7 @@ class Candidate(models.Model):
     career = JSONField(null=True, blank=True)
     training = JSONField(null=True, blank=True)
 
-    cv_ref = models.CharField(max_length=150, null=True, blank=True)
+    cv_file = models.FileField(upload_to='resumes', null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, null=True, blank=True)
 

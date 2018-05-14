@@ -8,11 +8,11 @@
     {% if user.groups.all.0.name == 'recruiters' %}
     <table>
       <form action="/recruiter/job_offer/">
-        <input type="submit" value="Job offer" />
+        <input type="submit" value="Post job offer" />
       </form>
 
       <form action="/recruiter/offers/">
-        <input type="submit" value="View offers"/>
+        <input type="submit" value="Manage job offers"/>
       </form>
 
       <form action="/recruiter/batch/">
