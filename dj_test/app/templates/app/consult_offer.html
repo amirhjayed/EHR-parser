@@ -4,20 +4,20 @@
 
 {% block content %}
 <br>
-<div style="padding-left:16px">
-  <h2>Candidate space</h2>
-  <h3>Consult offer</h3>
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444" >
+  <h2 style="font-weight: bold;">Candidate space</h2>
+  <div>Consult the requirements and description of the <b>{{offer}}</b> position<br> oppening in <b>{{ recruiter }}.</b></div><br>
     <form>
-        <fieldset disabled="disabled">
-            <table>
+        <fieldset disabled="disabled" style="border-width: 0px">
+            <table style="margin: 0px auto ;border-width: 1px">
               {{ form }}
             </table>
         </fieldset>
     </form>
+  <form action="./contact">
+      <input type="submit" value="Contact" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
+  </form>
 </div>
 
-  <form action="./contact">
-      <button>Contact</button>
-  </form>
 
 {% endblock %}

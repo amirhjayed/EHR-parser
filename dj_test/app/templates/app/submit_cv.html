@@ -30,7 +30,10 @@
         <p>{{ message }}</p>
       {% else %}
         <div>{{ message }}</div>
-        <div style="font-size: 18px">{{message2}}<br><br></div>
+        {% if message2 %}
+          <div style="font-size: 18px">{{message2}}</div>
+          <div style="font-size: 18px">{{message3}}<br><br></div>
+        {%endif%}
         <a href="./">Try again!</a>
       {% endif %}
     </h4>

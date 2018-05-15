@@ -30,16 +30,27 @@ class Segmenter:
             'skill': [],
             'interest': [],
         }
-        self.seg_flag = False
 
     def is_valid(self):
         # Segmentation is considered failed if these segments are empty
-        return self.segDict['education'] and self.segDict['career'] and self.segDict['skill']
+        empty_career = not bool(self.segDict['education'])
+        empty_education = not bool(self.segDict['career'])
+        empty_skills = not bool(self.segDict['skill'])
+        if empty_career or empty_education or empty_skills:
+            self.segDict = {
+                'contact': [],
+                'career': [],
+                'education': [],
+                'skill': [],
+                'interest': [],
+            }
+            return False
+        else:
+            return True
 
     def line_segmentation(self, layout):
         current_header = 'contact'
         retstr = ''
-
         # because layout line and Textline not on same level (pdfminer lt tree)
         layout_expanded = []
         for obj in layout:
@@ -53,7 +64,6 @@ class Segmenter:
         layout_expanded = sorted(layout_expanded, key=lambda o: -o.y1)
         for lt_obj in layout_expanded:
             if isinstance(lt_obj, LTLine):
-                print('line ', retstr)
                 potential_header = retstr.upper().rstrip('S')
                 potential_header = self.headersDict.get(potential_header)
                 if potential_header:
@@ -83,8 +93,7 @@ class Segmenter:
                         # Segmentaion happens here :
                         if lt_text_list[-2].fontname.endswith("Bold"):
                             # Check if bold
-                            potential_header = retstr.upper()
-                            print('header', retstr)
+                            potential_header = retstr.upper().rstrip(':')
                             potential_header = self.headersDict.get(potential_header)
                             if potential_header:
                                 current_header = potential_header
@@ -92,7 +101,7 @@ class Segmenter:
                                 self.segDict[current_header].append(retstr)
                         elif retstr.isupper():
                             # Check if upper
-                            potential_header = retstr.upper().rstrip('S')
+                            potential_header = retstr.upper().rstrip(':')
                             potential_header = self.headersDict.get(potential_header)
                             if potential_header:
                                 current_header = potential_header
@@ -135,31 +144,29 @@ class Segmenter:
             else:
                 self.header_segmentation(layout)
 
-        self.seg_flag = True
-
     def get_contact(self):
-        return self.segDict['contact']
+        return list(filter(None, self.segDict['contact']))
 
     def get_skill(self):
-        return self.segDict['skill']
+        return list(filter(None, self.segDict['skill']))
 
     def get_education(self):
-        return self.segDict['education']
+        return list(filter(None, self.segDict['education']))
 
     def get_career(self):
-        return self.segDict['career']
+        return list(filter(None, self.segDict['career']))
 
     def get_interest(self):
-        return self.segDict['interest']
+        return list(filter(None, self.segDict['interest']))
 
     def get_json(self):
-        if not self.seg_flag:
-            self.layout_pdf()
         seg_json = dumps(self.segDict, indent=2, ensure_ascii=False)
         return seg_json
 
 
 if __name__ == '__main__':
-    seg = Segmenter('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/CV-afifa-nouri.pdf', 'En')
-    print(seg.get_json())
-    print(seg.is_valid())
+    with open('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/Mohamed-Amin-Houidi.pdf', 'rb') as cvfile:
+        seg = Segmenter(cvfile, 'En')
+        seg.layout_pdf()
+        if seg.is_valid():
+            print(seg.get_json())

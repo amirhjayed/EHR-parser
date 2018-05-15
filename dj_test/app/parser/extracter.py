@@ -99,13 +99,12 @@ class Extracter:
 
                 if key:
                     self.skill_dict_set[key].add(tok)
-        self.skill_dict = {key: ' ' + ','.join(self.skill_dict_set[key]) for key in self.skill_dict_set}
-        print(self.skill_dict)
+        self.skill_dict = {key: ','.join(self.skill_dict_set[key]) for key in self.skill_dict_set}
 
         # maybe a better way
         for key in self.skill_dict:
             if self.skill_dict[key]:
-                self.skill_dict[key] = self.skill_dict[key][1:]
+                self.skill_dict[key] = self.skill_dict[key]
 
     def extract_degree(self):
         self.degree = ''
@@ -131,10 +130,11 @@ class Extracter:
         self.experience = experience
 
     def extract(self):
-        self.extract_contact()
-        self.extract_skill()
-        self.extract_degree()
-        self.extract_career()
+        if self.seg.is_valid():
+            self.extract_contact()
+            self.extract_skill()
+            self.extract_degree()
+            self.extract_career()
 
     # Getters
     def get_json(self, arg="all"):
@@ -162,9 +162,20 @@ class Extracter:
 
     def is_valid(self):
         if not self.seg.is_valid():
-            return False
-        else:
-            if True:
-                return True
+            return "seg"
+        else:  # Extraction fails if these crucial info is empty
+            no_name = not bool(self.contact_dict['name'])
+            no_email = not bool(self.contact_dict['email'])
+            no_title = not bool(self.contact_dict['title'])
+            no_degree = not bool(self.degree)
+
+            if no_name:
+                return "name"
+            elif no_email:
+                return "email"
+            elif no_title:
+                return "title"
+            elif no_degree:
+                return "degree"
             else:
-                return True
+                return ""

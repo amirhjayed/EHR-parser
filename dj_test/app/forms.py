@@ -33,7 +33,7 @@ class ContactForm(forms.Form):
     subject = forms.CharField(label='Subject', max_length=100)
     sender = forms.EmailField()
     reciever = forms.EmailField()
-    message = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 70}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 70, 'style': 'background: #eee; border: 1px solid #ddd;width:95%;'}))
 
 
 class UserForm(UserCreationForm):

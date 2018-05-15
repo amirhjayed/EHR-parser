@@ -59,14 +59,14 @@ class OfferFormView(View):
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
         form = JobOfferForm(instance=offer)
-        return render(request, self.template_name, {'form': form, 'get': 'get'})
+        return render(request, self.template_name, {'form': form, 'get': 'get', 'offer': offer.title.replace(',', ' ')})
 
     def post(self, request, offer_id):
         if request.POST.get('edit'):
             offer = JobOffer.objects.get(id=offer_id)
             form = JobOfferForm(request.POST, instance=offer)
             form.save()
-            return render(request, self.template_name, {'form': form, 'post': 'post'})
+            return render(request, self.template_name, {'form': form, 'post': 'post', 'offer': offer.title.replace(',', ' ')})
         if request.POST.get('delete'):
             JobOffer.objects.get(id=offer_id).delete()
             return redirect('/recruiter/offers/')
@@ -153,9 +153,9 @@ class ContactCandidateView(View):
     def get(self, request, offer_id, cand_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(id=cand_id)
-        data = {'subject': 'Job Offer', 'sender': offer.recruiter.email, 'reciever': cand.email, 'message': 'wanna work ?'}
+        data = {'subject': 'Job Offer', 'sender': offer.recruiter.email, 'reciever': cand.email, 'message': 'Dear sir, do you want to work for us ?'}
         form = ContactForm(data)
-        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Recruiter'})
+        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Recruiter', 'name': cand.name, 'offer': offer.title.replace(',', ' ')})
 
     def post(self, request, offer_id, cand_id):
         form = ContactForm(request.POST)
@@ -229,7 +229,6 @@ class Submit_cv_view(View):
         render_dict = {'post': 'yes'}
         if request.FILES.get('cv_file'):
             myfile = request.FILES['cv_file']
-            print(type(myfile))
             if myfile.name.endswith('pdf'):
                 lang = request.POST.get('language')
 
@@ -237,7 +236,9 @@ class Submit_cv_view(View):
                 extracter = Extracter(myfile, lang[0:2])
 
                 # stuff
-                if extracter.is_valid():
+                extracter_message = extracter.is_valid()  # is_valid returns the cause of extraction failure.
+                print(extracter_message)
+                if not extracter_message:  # if message is empty extraction is valid
                     try:
                         candidate = Candidate.objects.get(user=request.user.id)
                     except Candidate.DoesNotExist:
@@ -245,7 +246,8 @@ class Submit_cv_view(View):
 
                     # update existing candidate object
                     if candidate:
-                        candidate = Candidate(id=candidate.id, **extracter.get_dict(), cv_file=myfile)
+                        candidate.cv_file.delete(save=False)
+                        candidate = Candidate(id=candidate.id, **extracter.get_dict(), cv_file=myfile, user=request.user)
                         candidate.save()
 
                         render_dict.update({
@@ -265,19 +267,44 @@ class Submit_cv_view(View):
 
                 else:
                     message = 'Sorry, we were unable to parse your CV.'
-                    message2 = 'Are you sure you chose the right language ?'
-                    render_dict.update({
-                        'message': message,
-                        'message2': message2
-                    })
+                    if extracter_message == 'seg':
+
+                        render_dict.update({
+                            'message': message,
+                            'message2': 'Segmentation failed. Please make sure you chose the right language.',
+                            'message3': 'This also can happen if the template used to create the CV is complicated.'
+                        })
+                    elif extracter_message == 'name':
+
+                        render_dict.update({
+                            'message': message,
+                            'message2': 'Extraction failed to extract your name.',
+                            'message3': 'The name must start with a capitalized letter for us to be able to extract it.'
+                        })
+                    elif extracter_message == 'email':
+
+                        render_dict.update({
+                            'message': message,
+                            'message2': 'Extraction failed to extract your email.',
+                            'message3': 'Your CV must include an email so recruiters can contact you. ',
+                        })
+                    elif extracter_message == 'degree':
+
+                        render_dict.update({
+                            'message': message,
+                            'message2': 'Extraction failed to extract your degree.',
+                            'message3': 'Check if the education section contain the name of the degree for each school.',
+                        })
+                    elif extracter_message == 'title':
+                        render_dict.update({
+                            'message': message,
+                            'message2': 'Extraction failed to extract your title.',
+                            'message3': 'Please check if you mentioned your title in the contact section or in your career section.',
+                        })
 
             else:
-                success_flag = False
-                message = 'Please upload a resume in PDF format'
                 render_dict = {
-                    'post': 'yes',
-                    'success': success_flag,
-                    'message': message
+                    'message': 'Please upload a resume in PDF format'
                 }
 
             return render(request, self.template_name, render_dict)
@@ -301,7 +328,6 @@ class ListOffersView(View):
             offers = list(JobOffer.objects.all())
             offers.sort(key=order_func, reverse=True)
             offers = [(o.title.replace(',', ' '), o.id) for o in offers]
-            print(offers)
             return render(request, self.template_name, {'offers': offers})
         except ObjectDoesNotExist:
             return render(request, self.template_name, {'message': 'Please upload a CV before using this feature.'})
@@ -313,7 +339,7 @@ class ConsultOfferView(View):
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
         form = JobOfferForm(instance=offer)
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'offer': offer.title.replace(',', ' '), 'recruiter': offer.recruiter.name})
 
 
 class ContactRecruiterView(View):
@@ -322,9 +348,9 @@ class ContactRecruiterView(View):
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(user=request.user.id)
-        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'I want to work.'}
+        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'Dear sir, the attached fle is my CV. I want to work'}
         form = ContactForm(data)
-        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Candidate'})
+        return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Candidate', 'name': offer.recruiter.name, 'offer': offer.title.replace(',', ' ')})
 
     def post(self, request, offer_id):
         form = ContactForm(request.POST)

@@ -4,15 +4,15 @@
 
 {% block content %}
 <br>
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444">
 
   <h2>{{space}} space</h2>
-  <h3>Contact {{space}}</h3>
+  <div>Contact <b>{{name}}</b> for the <b>{{offer}}</b> positon<br>{% if space == "Candidate"%}Your CV will be attached with the sent mail.<br><br>{%endif%}</div>
 
     {% if post %}
     <form>
-      <fieldset disabled="disabled">
-        <table>
+      <fieldset disabled="disabled" style="border-width: 0px">
+        <table style="margin: 0px auto; border-style: ;border-width: 1px">
           {{ form }}
         </table>
       </fieldset>
@@ -22,13 +22,13 @@
 
     {% if get %}
     <form method="post">
-    <fieldset>
-      <table>
+    <fieldset style="border-width: 0px">
+      <table style="margin: 0px auto; border-style: ;border-width: 1px">
         {% csrf_token %}
         {{ form }}
       </table>
-    </fieldset>
-      <input type="submit" value="Send mail" name="send">
+    </fieldset><br>
+      <input type="submit" value="Send mail" name="send" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
     </form>
     {% endif %}
 {% endblock %}
