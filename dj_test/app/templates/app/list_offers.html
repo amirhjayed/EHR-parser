@@ -1,13 +1,13 @@
 {% extends "app/base.html" %}
 
 {% block content %}
-<div style="padding-left:16px">
-<h2>Candidate space</h2>
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 95%; background: #e5e5e5; color: #444"><br>
+<h2 style="text-align: center;font-weight: bold; color: #091e4d" >Candidate space</h2>
+<div style="padding-left:30%">
 {% if not message %}
 {% if offers %}
-    Offers List
-      {{ offer }}
+    <div style="font-weight: bold; font-size: 23px;color: #0c62aa">Offers List</div>
+      <div style="color: #999">The offers are presented sorted according to how well they match the informaion<br> extracted from your CV.</div>
       {% for offer in offers %}
         <ul>
             <li><a href="./{{offer.1}}/">{{ offer.0 }}</a></li>
@@ -17,7 +17,7 @@
 {% else %}
  {{ message }}
 {% endif %}
-</div>
+<br></div>
 
 
 {% endblock %}

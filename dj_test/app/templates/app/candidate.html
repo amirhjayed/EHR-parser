@@ -4,18 +4,19 @@
 
 {% block content %}
 {% if user.groups.all.0.name == 'candidates' %}
-<div style="padding-left:16px">
-  <h2>Candidate space</h2>
+<div style="margin:0 auto;width: 95%;text-align: center; background: #e5e5e5; color: #444">
+<br>
+  <h2 style="font-weight: bold;">Candidate space</h2>
 
 <form action="submit-cv/">
-  <input type="submit" value="Submit CV"/>
+  <input type="submit" value="Submit CV" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
 </form>
 
 <form action="consult-offers/">
-  <input type="submit" value="Consult offers"/>
+    <input type="submit" value="Consult offers" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
 </form>
 
-
+<br><br>
 {% else %}
   <br><a href="/candidate/signup/">sign-up</a>
   <a href="/candidate/login/">login</a><br>

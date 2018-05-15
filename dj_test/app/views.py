@@ -348,7 +348,7 @@ class ContactRecruiterView(View):
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(user=request.user.id)
-        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'Dear sir, the attached fle is my CV. I want to work'}
+        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'Dear sir, the attached fle is my CV. I want to work.'}
         form = ContactForm(data)
         return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Candidate', 'name': offer.recruiter.name, 'offer': offer.title.replace(',', ' ')})
 

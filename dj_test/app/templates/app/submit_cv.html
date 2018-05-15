@@ -4,21 +4,21 @@
 
 {% block content %}
 
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 95%;text-align: center;background: #e5e5e5; color: #444"><br>
   <h2>Candidate space</h2>
   {% if get %}
   <div style="font-size: 25px;font-weight:bold">Upload you resume here.<br></div>
   <div>{{ message }}</div><br><br>
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data" >
     {% csrf_token %}
-    <select name="language">
-      <option selected disabled>Resume language</option>
-      <option>French</option>
-      <option>English</option>
-    </select>
-    <input type="File" name="cv_file">
+      <select name="language" style="background: #ccc; width: 30%;align-content: center;">
+        <option selected disabled style="font-size: 20px; color: #444;">Resume language</option>
+        <option>French</option>
+        <option>English</option>
+      </select><br><br>
+    <input type="File" name="cv_file" style="margin:0 auto;text-align: center;font-size: 20px; color: #444;font-weight: bold; width: 30%; background: #ccc"><br>
     <div>
-      <button type="submit">Submit</button>
+      <input type="submit" value="Upload" style="font-size: 20px; color: #444;font-weight: bold; width: 30%; background: #ccc" /><br>
     </div>
   </form>
   {% endif %}
@@ -37,6 +37,6 @@
         <a href="./">Try again!</a>
       {% endif %}
     </h4>
-  {% endif %}
+  {% endif %}<br>
 </div>
 {% endblock %}
