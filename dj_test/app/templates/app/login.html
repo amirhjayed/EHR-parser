@@ -3,13 +3,15 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 50%;text-align: center; background: #e5e5e5; color: #444" ><br>
+<h2>Login</h2><br>
   <form
    method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
+    <table style="margin: 0px auto ;width: 62%;border-width: 1px">
+        {{ form }}
+    </table><br>
+    <input type="submit" value="Login" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
   </form>
-</div>
+<br></div>
 {% endblock %}

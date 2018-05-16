@@ -26,7 +26,7 @@ class JobOfferForm(forms.ModelForm):
 class CandidateForm(forms.ModelForm):
     class Meta():
         model = Candidate
-        exclude = ['email', 'address', 'phone', 'cv_ref']
+        exclude = ['email', 'address', 'phone', 'cv_file', 'user', 'recruiter']
 
 
 class ContactForm(forms.Form):
@@ -53,9 +53,10 @@ class RecruiterForm(forms.ModelForm):
         model = Recruiter
         exclude = ['user']
         widgets = {
-            'location': forms.Textarea(attrs={'rows': 2, 'cols': 40})
+            'summary': forms.Textarea(attrs={'rows': 6, 'cols': 70, 'style': 'background: #eee; border: 1px solid #ddd;width:95%;'}),
+            'location': forms.Textarea(attrs={'rows': 2, 'cols': 40, 'style': 'background: #eee; border: 1px solid #ddd;width:95%;'})
         }
 
 
 class FileFieldForm(forms.Form):
-    file_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file_field = forms.FileField(label="", widget=forms.ClearableFileInput(attrs={'multiple': True, 'style': "margin:0 auto;text-align: center;font-size: 20px; color: #444;font-weight: bold; width: 30%; background: #ccc"}))

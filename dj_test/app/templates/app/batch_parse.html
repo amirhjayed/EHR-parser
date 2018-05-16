@@ -3,14 +3,22 @@
 {% block Homepage %}Batch CV{% endblock %}
 
 {% block content %}
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 95%;text-align: center;background: #e5e5e5; color: #444"><br>
   <h2>Recruiter space</h2>
   <h4>Batch CV parser</h5>
 
   {% if form %}
-  <form action="" enctype="multipart/form-data" method="post">{% csrf_token %}
-    {{ form }}
-    <input type="submit" name="submit">
+  <div style="font-size: 25px;font-weight:bold">Upload you resume here.<br></div>
+  <div>{{ message }}</div><br><br>
+  <form method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+      <select name="language" style="background: #ccc; width: 30%;align-content: center;">
+        <option selected disabled style="font-size: 20px; color: #444;">Resume language</option>
+        <option>French</option>
+        <option>English</option>
+      </select><br><br>
+      {{form}}
+      <input type="submit" name="Upload Files" style="margin:0 auto;text-align: center;font-size: 20px; color: #444;font-weight: bold; width: 30%; background: #ccc"><br>
   </form>
   {% endif %}
 
@@ -22,5 +30,5 @@
       {% endfor%}
     </ul>
   {% endif %}
-</div>
+<br><br></div>
 {% endblock %}

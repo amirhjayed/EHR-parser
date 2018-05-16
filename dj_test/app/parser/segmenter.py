@@ -165,8 +165,8 @@ class Segmenter:
 
 
 if __name__ == '__main__':
-    with open('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/Mohamed-Amin-Houidi.pdf', 'rb') as cvfile:
-        seg = Segmenter(cvfile, 'En')
+    with open('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/cv_amir.pdf', 'rb') as cvfile:
+        seg = Segmenter(cvfile, 'Fr')
         seg.layout_pdf()
         if seg.is_valid():
             print(seg.get_json())

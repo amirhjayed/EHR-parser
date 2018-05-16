@@ -1,25 +1,30 @@
 {% extends "app/base.html" %}
 
 {% block content %}
-<div style="padding-left:16px">
-<h2>Recruiter space</h2>
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 40%;text-align: center;background: #e5e5e5; color: #444"><br>
+<h2>Recruiter space</h2><br><br>
+<div>Find matches for the <b>{{ offer }}</b> postion.</div><br>
 <form>
-  <select name="db">
+  <select name="db" style="background: #ccc; width: 80%;align-content: center;">
     <option disabled selected>Choose CV uploader</option>
     <option value="yours">{{ name }}</option>
     <option value="ours">Candidate</option>
-  </select>
-  <input type="submit" value="Match">
+  </select><br><br>
+  <input type="submit" value="Match"  style="margin:0 auto;text-align: center;font-size: 20px; color: #444;font-weight: bold; width: 80%; background: #ccc"><br>
 </form>
     <br>
-    L'offre:
-      {{ offer }}
+    {% if candidates %}
+    <hr>
+    <div style="color: #999;font-size: 15px; text-align: left; padding-left: 15px">Click on the the names to consult the overview of the candidate extracted from his CV and chose to contact him if desired.<br></div>
+    <div style="font-weight: bold;text-align: left; padding-left: 15px">Candidate names : </div>
+      <ol style ="text-align: left;padding-left: 40px">
       {% for cand in candidates %}
-        <ul>
-            <li><a href="./{{cand.id}}">{{ cand.name }}</a></li>
-        </ul>
+    <div>
+            <li><a href="./{{cand.id}}">{{ cand.name }}</a></li></div>
       {% endfor %}
+      </ol>
+    <div style="color: #999">The candidates are presented sorted according to how well they requirements of the job offer in hand.<br><br></div></div>
+    {%endif%}
 </div>
 
 {% endblock %}

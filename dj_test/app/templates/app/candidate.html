@@ -3,10 +3,10 @@
 {% block Homepage %}Candidate space{% endblock %}
 
 {% block content %}
+<div style="margin:0 auto;width: 95%;text-align: center; background: #e5e5e5; color: #444"><br>
 {% if user.groups.all.0.name == 'candidates' %}
-<div style="margin:0 auto;width: 95%;text-align: center; background: #e5e5e5; color: #444">
-<br>
   <h2 style="font-weight: bold;">Candidate space</h2>
+<br>
 
 <form action="submit-cv/">
   <input type="submit" value="Submit CV" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
@@ -14,13 +14,18 @@
 
 <form action="consult-offers/">
     <input type="submit" value="Consult offers" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
-</form>
-
+</form><br>
+</div>
 <br><br>
 {% else %}
-  <br><a href="/candidate/signup/">sign-up</a>
-  <a href="/candidate/login/">login</a><br>
-  Login or create a candidate account to access our services!
+<center>
+  <h2 style="font-weight: bold;">Candidate space</h2>
+<br> <a href="/candidate/signup/"><input type="button" class="btn btn-secondary" value="Sign Up"></a></br>
+   <br>
+    <a href="/candidate/login/"><input type="button" class="btn btn-secondary" value="Log in"></a>
+    <center><br>
+    <h4>Login or create a recruiter account to access our services!</h4><br>
+    </center>
 {% endif %}
 
 </div>

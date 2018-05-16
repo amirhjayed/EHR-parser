@@ -24,11 +24,21 @@
   {% endif %}
 
   {% if post %}
-    <h4>
       {% if success %}
-        Submit succesful<br>
-        <p>{{ message }}</p>
-      {% else %}
+        <h4>Submit succesful</h4>
+        <div>{{ message }}</div>
+        <div>CV file uploaded to <a href="{{cv_ref}}">{{cv_ref}}</a></div><br><br><br>
+        <div style="border-width: 2px;border-style: solid; border-color: #bbb; width: 50%;margin:0 auto;"><br><br>
+        <div style=" font-size: 25px">Overview of the extracted information</div><br>
+        <form>
+            <fieldset disabled="disabled">
+                <table style="margin: 0px auto;">
+                  {{ form }}
+                </table>
+            </fieldset>
+        </form><br><br>
+        </div>
+        {%else%}
         <div>{{ message }}</div>
         {% if message2 %}
           <div style="font-size: 18px">{{message2}}</div>
@@ -36,7 +46,6 @@
         {%endif%}
         <a href="./">Try again!</a>
       {% endif %}
-    </h4>
   {% endif %}<br>
 </div>
 {% endblock %}

@@ -3,14 +3,14 @@
 {% block Homepage %}Candidate sign-up{% endblock %}
 
 {% block content %}
-<div style="padding-left:16px">
-  <h2>Sign up</h2>
+<div style="margin:0 auto;width: 50%;text-align: center; background: #e5e5e5; color: #444" ><br>
+  <h2>Sign up</h2><br>
   <form method="post">
     {% csrf_token %}
-    <table>
+    <table style="margin: 0px auto ;width: 62%;border-width: 1px">
         {{ uform.as_table }}
     </table><br>
-    <button type="submit">Sign up</button>
-  </form>
+    <input type="submit" value="sign-up" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
+  </form><br>
 </div>
 {% endblock %}

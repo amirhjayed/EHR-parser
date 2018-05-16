@@ -4,15 +4,16 @@
 
 {% block content %}
 <br>
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444"><br>
   <h2>Recruiter space</h2>
 
-    <div style="font-size: 25px; font-weight: bold;">{{ name }} posted offers : </div>
-    <div>Click on a job offer to edit it, delete it or find the best candidates.</div>
-    <ul>
+    <div style="font-size: 25px;text-align: left;padding-left: 40px"><b>{{ name }}</b> offers : </div>
+    <div style="font-size: 15px;color: #888;text-align: left;padding-left: 40px">Click on a job offer to edit it, delete it or find the best candidates.</div><br>
+
+    <ul style="list-style-type: none;">
         {% for offer in offers %}
             <li><a href="./{{offer.1}}/">{{offer.0}}</a></li>
         {% endfor %}
-    </ul>
+    </ul><br>
 </div>
 {% endblock %}

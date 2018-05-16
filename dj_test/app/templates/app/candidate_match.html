@@ -4,9 +4,10 @@
 
 {% block content %}
 <br>
-<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444">
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444"><br>
   <h2>Recruiter space</h2>
-  <h3>View Candidate</h3>
+  <div style="font-size: 22px"><b>{{name}}</b> overview.</div>
+  <div>Check his <a href="/media/{{cv_file}}">CV</a> for more information.</div><br>
     <form>
         <fieldset disabled="disabled">
             <table style="margin: 0px auto; border-style: ;border-width: 1px">
@@ -17,7 +18,7 @@
   <br>
   <form action="./contact">
       <input type="submit" value="Contact" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
-  </form>
+  </form><br>
 </div>
 
 

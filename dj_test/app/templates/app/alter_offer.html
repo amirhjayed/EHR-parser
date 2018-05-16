@@ -3,14 +3,16 @@
 {% block Homepage %} EHR homepage{% endblock %}
 
 {% block content %}
-<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444">
-<h2 style="font-weight: bold;">{{offer}}</h2>
+<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444"><br>
+<h1 style="font-weight: bold;">Recruiter space</h1><br>
+
+<h3 style="font-weight: bold;">{{offer}}</h3>
 <div>Edit the following form <br><br></div>
 <form method="post">
     {% csrf_token %}
   <table style="margin: 0px auto; border-style: ;border-width: 1px">
       {{ form }}
-  </table>
+  </table><br>
 {% if post %}
 <br>
 <div style="padding-left:16px">Modification submitted </div>
@@ -31,7 +33,7 @@
   <form action="./match/">
     <input type="submit" value="Find matches" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
   </form>
-</table>
+</table><br>
 
 </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.db import models
-from django_mysql.models import JSONField
+# from django_mysql.models import JSONField
 from django.contrib.auth.models import User
 
 
@@ -54,8 +54,9 @@ class Candidate(models.Model):
 
     degree = models.CharField(max_length=50, null=True, blank=True)
     experience = models.IntegerField(default=0)
-    career = JSONField(null=True, blank=True)
-    training = JSONField(null=True, blank=True)
+
+    # career = JSONField(null=True, blank=True)
+    # training = JSONField(null=True, blank=True)
 
     cv_file = models.FileField(upload_to='resumes', null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)

@@ -15,7 +15,6 @@ urlpatterns = [
 
     # Submit Job offer
     path('recruiter/job_offer/', views.JobOfferView.as_view(), name='Job offer'),
-    path('recruiter/job_offer/submit/', views.submit_jo, name='submit_jo'),
 
     # Offers
     path('recruiter/offers/', views.OfferListView.as_view(), name='View offers'),
@@ -33,6 +32,7 @@ urlpatterns = [
     # ~~~~~~~~~~~~~~~
     path('candidate/', views.CandidateView.as_view(), name='candidate'),
     path('candidate/submit-cv/', views.Submit_cv_view.as_view()),
+    path('media/resumes/<str:cv_file>', views.pdf_view),
     path('candidate/consult-offers/', views.ListOffersView.as_view()),
     path('candidate/consult-offers/<int:offer_id>/', views.ConsultOfferView.as_view()),
     path('candidate/consult-offers/<int:offer_id>/contact/', views.ContactRecruiterView.as_view()),

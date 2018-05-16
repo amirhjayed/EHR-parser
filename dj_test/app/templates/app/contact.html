@@ -4,20 +4,20 @@
 
 {% block content %}
 <br>
-<div style="margin:0 auto;width: 50%;text-align: center; border: 2px solid; background: #e5e5e5; color: #444">
+<div style="margin:0 auto;width: 55%;text-align: center; border: 2px solid grey; background: #e5e5e5; color: #444"><br>
 
   <h2>{{space}} space</h2>
   <div>Contact <b>{{name}}</b> for the <b>{{offer}}</b> positon<br>{% if space == "Candidate"%}Your CV will be attached with the sent mail.<br><br>{%endif%}</div>
 
     {% if post %}
+      <div style="font-size: 24px; color: #444; font-weight: bold">Email sent!</div><br>
     <form>
       <fieldset disabled="disabled" style="border-width: 0px">
         <table style="margin: 0px auto; border-style: ;border-width: 1px">
           {{ form }}
         </table>
       </fieldset>
-    </form>
-      <div>Email sent!</div>
+    </form><br>
     {% endif %}
 
     {% if get %}
@@ -29,6 +29,7 @@
       </table>
     </fieldset><br>
       <input type="submit" value="Send mail" name="send" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc" />
-    </form>
+    </form><br>
+  </div>
     {% endif %}
 {% endblock %}

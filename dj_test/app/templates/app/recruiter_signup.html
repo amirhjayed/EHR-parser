@@ -3,15 +3,16 @@
 {% block Homepage %}Recruiter sign-up{% endblock %}
 
 {% block content %}
-<div style="padding-left:16px">
+<div style="margin:0 auto;width: 50%;text-align: center; background: #e5e5e5; color: #444" ><br>
   <h2>Sign up</h2>
+  {{message}}<br>
   <form method="post">
     {% csrf_token %}
-    <table>
+    <table style="margin: 0px auto ;width: 62%;border-width: 1px">
         {{ uform.as_table }}
         {{ pform.as_table }}
-    </table>
-    <button type="submit">Sign up</button>
-  </form>
+    </table><br>
+    <input type="submit" value="Sign-up" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
+  </form><br>
 </div>
 {% endblock %}

@@ -10,6 +10,9 @@ from django.contrib.auth.models import User, Group
 from django.core import mail
 from .matcher.get_score import get_score
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
+from django.conf import settings
 
 
 class HomeView(View):
@@ -52,6 +55,15 @@ class JobOfferView(View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form})
 
+    def post(self, request):
+        user_id = User.objects.get(id=request.user.id)
+        recruiter = Recruiter.objects.get(user_id=user_id)
+        form = JobOfferForm(request.POST)
+        job_offer = form.save(commit=False)
+        job_offer.recruiter = recruiter
+        job_offer.save()
+        return redirect('/recruiter/offers/' + str(job_offer.id) + '/')
+
 
 class OfferFormView(View):
     template_name = 'app/alter_offer.html'
@@ -72,21 +84,11 @@ class OfferFormView(View):
             return redirect('/recruiter/offers/')
 
 
-def submit_jo(request):
-    if request.method == 'POST':
-        user_id = User.objects.get(id=request.user.id)
-        recruiter = Recruiter.objects.get(user_id=user_id)
-        form = JobOfferForm(request.POST)
-        job_offer = form.save(commit=False)
-        job_offer.recruiter = recruiter
-        job_offer.save()
-        return render(request, 'app/submit_jo.html')
-
-
 def signup(request):
     if request.method == "POST":
         uform = UserForm(data=request.POST)
         pform = RecruiterForm(data=request.POST)
+        print(pform.is_valid())
         if uform.is_valid() and pform.is_valid():
             user = uform.save()
             group = Group.objects.get(name='recruiters')
@@ -94,7 +96,15 @@ def signup(request):
             profile = pform.save(commit=False)
             profile.user = user
             profile.save()
+            new_user = authenticate(username=uform.cleaned_data['username'],
+                                    password=uform.cleaned_data['password1'],
+                                    )
+            login(request, new_user)
             return redirect('/recruiter/')
+        else:
+            uform = UserForm()
+            pform = RecruiterForm()
+            return render(request, 'app/recruiter_signup.html', {'uform': uform, "pform": pform, 'message': 'Registration failed. Try again'})
     else:
         uform = UserForm()
         pform = RecruiterForm()
@@ -144,7 +154,7 @@ class CandidateMatchView(View):
     def get(self, request, offer_id, cand_id):
         cand = Candidate.objects.get(id=cand_id)
         form = CandidateForm(instance=cand)
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'cv_file': cand.cv_file, 'name': cand.name.title()})
 
 
 class ContactCandidateView(View):
@@ -169,10 +179,10 @@ class ContactCandidateView(View):
 
 
 # Batch parse
-def handle_uploaded_file(f, fs, uid):
+def handle_uploaded_file(f, fs, uid, lang):
     filename = fs.save(f.name, f)
     uploaded_file_url = fs.location + "/" + filename
-    extracter = Extracter(uploaded_file_url)
+    extracter = Extracter(uploaded_file_url, lang)
     extracter.extract_contact()
 
     recruiter = Recruiter.objects.get(user_id=uid)
@@ -194,10 +204,11 @@ class BatchParserView(FormView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         files = request.FILES.getlist('file_field')
+        lang = request.POST.get('language')
         if form.is_valid():
             fs = FileSystemStorage()
             for f in files:
-                names.append(handle_uploaded_file(f, fs, request.user.id))
+                names.append(handle_uploaded_file(f, fs, request.user.id, lang[0:2]))
             return render(request, self.template_name, {'names': names})
         else:
             return self.form_invalid(form)
@@ -249,20 +260,24 @@ class Submit_cv_view(View):
                         candidate.cv_file.delete(save=False)
                         candidate = Candidate(id=candidate.id, **extracter.get_dict(), cv_file=myfile, user=request.user)
                         candidate.save()
-
+                        form = CandidateForm(instance=candidate)
                         render_dict.update({
                             'success': True,
-                            'message': 'Your profile was updated.\n File location : ' + candidate.cv_file.url,
+                            'message': 'Your profile was updated.',
+                            'cv_ref': candidate.cv_file.url,
+                            'form': form
                         })
 
                     # create new candidate object
                     else:
                         candidate = Candidate(**extracter.get_dict(), cv_file=myfile, user=request.user)
                         candidate.save()
-
+                        form = CandidateForm(instance=candidate)
                         render_dict.update({
                             'success': True,
-                            'message': 'Candidate profile created.\nFile location : ' + candidate.cv_file.url,
+                            'message': 'Candidate profile created.',
+                            'cv_ref': candidate.cv_file.url,
+                            'form': form
                         })
 
                 else:
@@ -374,7 +389,19 @@ def signup_candidate(request):
             user = uform.save()
             group = Group.objects.get(name='candidates')
             group.user_set.add(user)
+            new_user = authenticate(username=uform.cleaned_data['username'],
+                                    password=uform.cleaned_data['password1'],
+                                    )
+            login(request, new_user)
             return redirect('/candidate/')
     else:
         uform = UserForm()
         return render(request, 'app/candidate_signup.html', {'uform': uform})
+
+
+def pdf_view(request, cv_file):
+    with open(settings.BASE_DIR + '/media/resumes/' + cv_file, 'rb') as pdf:
+        response = HttpResponse(pdf.read(), content_type='application/pdf')
+        response['Content-Disposition'] = 'inline;filename=some_file.pdf'
+        return response
+    pdf.closed

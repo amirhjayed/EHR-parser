@@ -3,25 +3,33 @@
 {% block Homepage %}EHR homepage{% endblock %}
 
 {% block content %}
-    <div style="padding-left:16px">
-    <h2>Recruiter space</h2>
+    <div style="margin:0 auto;width: 95%;text-align: center;background: #e5e5e5; color: #444" ><br>
+    <h2 style="font-weight: bold;">Recruiter space</h2><br>
     {% if user.groups.all.0.name == 'recruiters' %}
-    <table>
-      <form action="/recruiter/job_offer/">
-        <input type="submit" value="Post job offer" />
-      </form>
+    <table style="margin: 0px auto ;border-width: 1px">
+    <form action="/recruiter/job_offer/">
+      <input type="submit" value="Post job offer" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
+    </form>
 
-      <form action="/recruiter/offers/">
-        <input type="submit" value="Manage job offers"/>
-      </form>
+    <form action="/recruiter/offers/">
+      <input type="submit" value="Manage job offers" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
+    </form>
 
-      <form action="/recruiter/batch/">
-        <input type="submit" value="Batch CV parsing"/>
-      </form>
-    </table>
+    <form action="/recruiter/batch/">
+      <input type="submit" value="Batch CV parsing" style="font-size: 20px; color: #444;font-weight: bold; width: 60%; background: #ccc"/>
+    </form>
+
+    </table><br>
+  </div>
     {% else %}
-    <a href="/recruiter/signup/">sign-up</a>
-    <a href="/recruiter/login/">login</a>
-    <h4>Login or create a recruiter account to access our services!</h4>
+<center>
+<a href="/recruiter/signup/"><input type="button" class="btn btn-secondary" value="Sign Up"></a></br>
+   <br>
+    <a href="/recruiter/login/"><input type="button" class="btn btn-secondary" value="Log in"></a>
+    <center><br>
+    <h4>Login or create a recruiter account to access our services!</h4><br>
+    </center>
     {% endif %}
+</center>
+
 {% endblock %}
