@@ -4,12 +4,11 @@
 
 {% block content %}
 <div style="margin:0 auto;width: 95%;text-align: center;background: #e5e5e5; color: #444"><br>
-  <h2>Recruiter space</h2>
-  <h4>Batch CV parser</h5>
+  <h2>Recruiter space</h2><hr>
+  <h3>Batch CV parser</h3><br>
 
   {% if form %}
-  <div style="font-size: 25px;font-weight:bold">Upload you resume here.<br></div>
-  <div>{{ message }}</div><br><br>
+  <div style="font-size: 20px;">Select the CV files you wan't to parse and add to our matching platform. <br><span style="font-size: 15px;color: #999">Make sure the CVs are in pdf fomrat and are in the same language.</span><br></div><br>
   <form method="post" enctype="multipart/form-data" >
     {% csrf_token %}
       <select name="language" style="background: #ccc; width: 30%;align-content: center;">
@@ -23,12 +22,23 @@
   {% endif %}
 
   {% if names %}
+  <br>
+  <hr>
   <p>The following candidates were added.</p>
-    <ul>
+    <ul style="list-style-type: none;">
       {% for n in names %}
-        <li>{{n}}</li>
+        <li><b>{{n}}</b></li>
       {% endfor%}
     </ul>
   {% endif %}
-<br><br></div>
+  {%if fails%}
+  <hr>
+  <p>The following CVs were not parsed.</p>
+    <ul style="list-style-type: none; text-align: left; padding-left: 30%;">
+      {%for f in fails%}
+        <li><b>{{f.0}}</b> <span style="color: #999;font-size: 15px;"><i>Hint:</i> {{f.1}}</span> </li>
+      {%endfor%}
+    </ul>
+  {%endif%}
+<br><br><br></div>
 {% endblock %}

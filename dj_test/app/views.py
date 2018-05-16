@@ -179,19 +179,24 @@ class ContactCandidateView(View):
 
 
 # Batch parse
-def handle_uploaded_file(f, fs, uid, lang):
-    filename = fs.save(f.name, f)
-    uploaded_file_url = fs.location + "/" + filename
-    extracter = Extracter(uploaded_file_url, lang)
-    extracter.extract_contact()
+def handle_uploaded_file(f, uid, lang):
 
-    recruiter = Recruiter.objects.get(user_id=uid)
-    contact_dict = extracter.get_dict("contact")
-    candidate = Candidate(**contact_dict, cv_ref=uploaded_file_url)
-    candidate.recruiter = recruiter
-    name = candidate.name
-    candidate.save()
-    return name
+    if f.name.endswith('pdf'):
+        recruiter = Recruiter.objects.get(user_id=uid)
+
+        extracter = Extracter(f, lang)
+        extracter_message = extracter.is_valid()
+
+        if not extracter_message:
+            candidate = Candidate(**extracter.get_dict(), cv_file=f)
+            candidate.recruiter = recruiter
+            candidate.save()
+            return (True, candidate.name)
+
+        else:
+            return(False, extracter_message)
+    else:
+        return (False, 'pdf')
 
 
 class BatchParserView(FormView):
@@ -201,15 +206,33 @@ class BatchParserView(FormView):
 
     def post(self, request, *args, **kwargs):
         names = []
+        fails = []
+
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         files = request.FILES.getlist('file_field')
         lang = request.POST.get('language')
         if form.is_valid():
-            fs = FileSystemStorage()
             for f in files:
-                names.append(handle_uploaded_file(f, fs, request.user.id, lang[0:2]))
-            return render(request, self.template_name, {'names': names})
+                flag, message = handle_uploaded_file(f, request.user.id, lang[0:2])
+                if flag:
+                    names.append(message.title())
+                else:
+                    if message == 'seg':
+                        message = 'Segmentation failed. Please make sure you chose the right language.'
+                    elif message == 'name':
+                        message = 'Extraction failed to extract your name.'
+                    elif message == 'email':
+                        message = 'Extraction failed to extract your email.'
+                    elif message == 'degree':
+                        message = 'Extraction failed to extract your degree.'
+                    elif message == 'title':
+                        message = 'Extraction failed to extract your title.'
+                    elif message == 'pdf':
+                        message = "This file isn't in PDF format."
+                    fails.append((f.name, message))
+
+            return render(request, self.template_name, {'names': names, 'fails': fails})
         else:
             return self.form_invalid(form)
 
@@ -248,7 +271,6 @@ class Submit_cv_view(View):
 
                 # stuff
                 extracter_message = extracter.is_valid()  # is_valid returns the cause of extraction failure.
-                print(extracter_message)
                 if not extracter_message:  # if message is empty extraction is valid
                     try:
                         candidate = Candidate.objects.get(user=request.user.id)
