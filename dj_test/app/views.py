@@ -134,13 +134,13 @@ class MatchView(View):
         if request.GET.get('db') == 'yours':
             order_func = get_match_function(offer_id)
             candidates = list(Candidate.objects.all().filter(recruiter_id=recruiter.id))
-            candidates.sort(key=order_func, reverse=True)
+            candidates.sort(key=order_func, reverse=False)
             return render(request, self.template_name, {'offer': offer.title.replace(',', ' '), 'candidates': candidates, 'name': recruiter.name})
 
         elif request.GET.get('db') == 'ours':
             order_func = get_match_function(offer_id)
             candidates = list(Candidate.objects.all().filter(recruiter_id=None))
-            candidates.sort(key=order_func, reverse=True)
+            candidates.sort(key=order_func, reverse=False)
             return render(request, self.template_name, {'offer': offer.title.replace(',', ' '), 'candidates': candidates, 'name': recruiter.name})
 
         else:
@@ -163,7 +163,19 @@ class ContactCandidateView(View):
     def get(self, request, offer_id, cand_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(id=cand_id)
-        data = {'subject': 'Job Offer', 'sender': offer.recruiter.email, 'reciever': cand.email, 'message': 'Dear sir, do you want to work for us ?'}
+        data = {'subject': 'Job Offer', 'sender': offer.recruiter.email, 'reciever': cand.email,
+                'message':
+                """Dear {},
+
+        We’re delighted to extend this offer of employment for the position of {} with {}. Please review this summary of terms and conditions for your anticipated employment with us.
+
+Please find attached the terms and conditions of your employment, should you accept this offer letter. We would like to have your response by next week. In the meantime, please feel free to contact me via email or phone at {}, if you have any questions.
+
+We are all looking forward to having you on our team.
+
+Best regards,
+
+{}""".format(cand.name, offer.title.replace(',', ' '), offer.recruiter.name, offer.recruiter.phone, offer.recruiter.name)}
         form = ContactForm(data)
         return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Recruiter', 'name': cand.name, 'offer': offer.title.replace(',', ' ')})
 
@@ -363,7 +375,7 @@ class ListOffersView(View):
             candidate = Candidate.objects.get(user=request.user.id)
             order_func = get_match_function2(candidate.id)
             offers = list(JobOffer.objects.all())
-            offers.sort(key=order_func, reverse=True)
+            offers.sort(key=order_func, reverse=False)
             offers = [(o.title.replace(',', ' '), o.id) for o in offers]
             return render(request, self.template_name, {'offers': offers})
         except ObjectDoesNotExist:
@@ -385,7 +397,22 @@ class ContactRecruiterView(View):
     def get(self, request, offer_id):
         offer = JobOffer.objects.get(id=offer_id)
         cand = Candidate.objects.get(user=request.user.id)
-        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message': 'Dear sir, the attached fle is my CV. I want to work.'}
+        data = {'subject': 'Job Offer', 'sender': cand.email, 'reciever': offer.recruiter.email, 'message':
+                """
+Dear {},
+
+I am very interested in applying for the {} position you advertised on ehrservices.com recently. My qualifications and experience match your specifications almost exactly.
+
+Please take a moment to review my attached CV.
+
+It would be a sincere pleasure to hear back from you soon to discuss this exciting opportunity.
+
+Sincerely,
+
+{}
+{}
+
+""".format(offer.recruiter.name, offer.title.replace(',', ' '), cand.name.title(), cand.phone)}
         form = ContactForm(data)
         return render(request, self.template_name, {'form': form, 'get': 'get', 'space': 'Candidate', 'name': offer.recruiter.name, 'offer': offer.title.replace(',', ' ')})
 

@@ -136,8 +136,8 @@ class Segmenter:
             interpreter.process_page(page)
             layout = device.get_result()
             line_count = sum(isinstance(x, LTLine) for x in layout)
+            # Segmentation by Line separators (LT Line)
             if line_count > 3:
-                # Segmentation by Line separators (LT Line)
                 self.line_segmentation(layout)
                 if not self.is_valid():
                     self.header_segmentation(layout)
@@ -165,8 +165,9 @@ class Segmenter:
 
 
 if __name__ == '__main__':
-    with open('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/cv_amir.pdf', 'rb') as cvfile:
+    with open('/home/amir_h/PCD-Related/EHR-parser/cv-dataset/cv_rymel.pdf', 'rb') as cvfile:
         seg = Segmenter(cvfile, 'Fr')
         seg.layout_pdf()
+        print(seg.is_valid())
         if seg.is_valid():
             print(seg.get_json())
